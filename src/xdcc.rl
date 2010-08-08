@@ -261,8 +261,8 @@ int init_processor(char *path)
         for (idx = 0, i = 0; i < dir_size; i++) {
             char *name = list[i];
             if (strncmp(name, ".", 1) != 0) {  /* Don't list hidden files and directories */
-                char *start = calloc(1024, sizeof(char));
                 char *buf = strconcat(path, name);
+                char *start = calloc(strlen(buf)+100, sizeof(char));
                 s = malloc(sizeof(struct stat));
                 lstat(buf, s);
                 free(buf);
@@ -270,8 +270,9 @@ int init_processor(char *path)
                 unsigned int sizeMB = size/(1024*1024);
                 sprintf(start, "#%d [%uMB] %s\n", idx+1, sizeMB, name);
                 files[idx].filename = strdup(name);
-                files[idx].filedata = start;
+                files[idx].filedata = strdup(start);
                 files[idx].info = s;
+                free(start);
                 idx++;
             }
             free(list[i]);
