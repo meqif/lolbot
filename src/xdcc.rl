@@ -13,6 +13,15 @@
 #define BUF_SIZE 1000
 #define BOTNAME loldrop
 
+struct file_data {
+    char *filename;
+    char *filedata;
+    struct stat *info;
+};
+
+int nfiles;
+struct file_data *files;
+
 static
 enum operation {
     SEND,
@@ -78,67 +87,17 @@ off_t fsize(char *filename)
 	return buf->st_size;
 }
 
-/* List directory contents and/or file properties */
-static
-int cmd_listar(char *path, char *remote_nick, int sockfd)
-{
-    struct dirent *d;
-    struct stat s;
-    DIR *dir = NULL;
-
-    dir = opendir(path);
-
-    if (dir != NULL) {
-        int i = 0, dir_size = 0;
-
-        /* Count used inodes, so we can create an array of the correct size */
-        while ( (d = readdir(dir)) )
-            if (d->d_ino != 0) dir_size++;
-
-        closedir(dir);
-        dir = opendir(path);
-
-        char *list[dir_size];
-        while ( (d = readdir(dir)) ) {
-            if (d->d_ino != 0)                 /* Ignore invalid inodes */
-                list[i++] = strdup(d->d_name);
-        }
-        list[i] = NULL;
-
-        /* Sort entries */
-        qsort(list, dir_size, sizeof(char *), string_cmp);
-
-        int idx;
-        for (idx = 1, i = 0; i < dir_size; i++) {
-            char buf[BUF_SIZE];
-            char *name = list[i];
-            if (strncmp(name, ".", 1) != 0) {  /* Don't list hidden files and directories */
-                char *start = calloc(1024, sizeof(char));
-                snprintf(buf, BUF_SIZE, "%s/%s", path, name);
-                lstat(buf, &s);
-                unsigned long size = s.st_size; /* Using long for supporting files >=4GiB */
-                unsigned int sizeMB = size/(1024*1024);
-                sprintf(start, "#%d\t[%uMB] %s\n", idx, sizeMB, name);
-                send_message(remote_nick, "PRIVMSG", start, sockfd);
-                free(start);
-                idx++;
-            }
-            free(list[i]);
-        }
-        closedir(dir);
-    }
-   else {
-        perror(path);
-        return 1;
-    }
-
-    return 0;
-}
-
 static
 int xdcc_list(char *remote_nick, int sockfd)
 {
-    return cmd_listar(SHARED_PATH, remote_nick, sockfd);
+//    return cmd_listar(SHARED_PATH, remote_nick, sockfd);
+
+    int i;
+    for (i = 0; i < nfiles; i++) {
+        send_message(remote_nick, "PRIVMSG", files[i].filedata, sockfd);
+    }
+
+    return 0;
 }
 
 static
@@ -151,7 +110,6 @@ static
 int xdcc_send(char *filename, char *remote_nick, int sockfd)
 {
 	char *port = "8888";
-    //int porti = ntohs(atoi(port));
     int porti = atoi(port);
 
     // Create listening socket
@@ -248,7 +206,8 @@ int _xdcc_process(char *string, int len, int sockfd)
                 printf("%s\n", digits);
                 desired_file = atoi(digits)-1;
             }
-			xdcc_send("poo.txt", remote_nick, sockfd);
+            if (desired_file >= 0)
+			    xdcc_send(files[desired_file].filename, remote_nick, sockfd);
 			break;
         default:
             send_message(remote_nick, "PRIVMSG", command, sockfd);
@@ -262,4 +221,65 @@ int xdcc_process(char *string, int sockfd)
 {
     int len = strlen(string);
     return _xdcc_process(string, len, sockfd);
+}
+
+int init_processor(char *path)
+{
+    struct dirent *d;
+    struct stat *s;
+    DIR *dir = NULL;
+
+    dir = opendir(path);
+
+    if (dir != NULL) {
+        int i = 0, dir_size = 0;
+
+        /* Count used inodes, so we can create an array of the correct size */
+        while ( (d = readdir(dir)) )
+            if (d->d_ino != 0) dir_size++;
+
+        closedir(dir);
+        dir = opendir(path);
+
+        files = malloc(dir_size * sizeof(struct file_data));
+        char *list[dir_size];
+        while ( (d = readdir(dir)) ) {
+            if (d->d_ino != 0)                 /* Ignore invalid inodes */
+                list[i++] = strdup(d->d_name);
+        }
+        list[i] = NULL;
+
+        /* Sort entries */
+        qsort(list, dir_size, sizeof(char *), string_cmp);
+
+        int idx;
+        for (idx = 0, i = 0; i < dir_size; i++) {
+            char buf[BUF_SIZE];
+            char *name = list[i];
+            if (strncmp(name, ".", 1) != 0) {  /* Don't list hidden files and directories */
+                char *start = calloc(1024, sizeof(char));
+                snprintf(buf, BUF_SIZE, "%s/%s", path, name);
+                s = malloc(sizeof(struct stat));
+                lstat(buf, s);
+                unsigned long size = s->st_size; /* Using long for supporting files >=4GiB */
+                unsigned int sizeMB = size/(1024*1024);
+                sprintf(start, "#%d [%uMB] %s\n", idx+1, sizeMB, name);
+                //files[idx] = malloc(sizeof(struct file_data));
+                files[idx].filename = strdup(name);
+                files[idx].filedata = start;
+                files[idx].info = s;
+                idx++;
+            }
+            free(list[i]);
+        }
+        nfiles = idx;
+
+        closedir(dir);
+    }
+   else {
+        perror(path);
+        return 1;
+    }
+
+    return 0;
 }

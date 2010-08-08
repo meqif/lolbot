@@ -12,11 +12,14 @@
 #define BUFSIZE 128
 #define SERVER "irc.oftc.net"
 #define PORT "6667"
+#define SHARED_PATH "/Users/meqif/Downloads/[OMDA]_AZUMANGA_DAIOH_01-26/"
 
 int main(int argc, const char *argv[])
 {
     int sockfd, err;
     char *buf = malloc(BUFSIZE * sizeof(char));
+
+    init_processor(SHARED_PATH);
 
     sockfd = create_socket(SERVER, PORT);
 
