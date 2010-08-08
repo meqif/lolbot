@@ -46,6 +46,18 @@ enum operation {
 
 %% write data;
 
+static
+char *strconcat(char *s1, char *s2)
+{
+	size_t size = strlen(s1) + strlen(s2) + 1;
+	char *s3 = calloc(size, sizeof (char));
+
+	strcpy(s3, s1);
+	strcpy(s3+strlen(s1), s2);
+
+    return s3;
+}
+
 int foo(char *str)
 {
     union {
@@ -119,12 +131,7 @@ int xdcc_send(char *filename, char *remote_nick, int sockfd)
     int addr = htonl(foo(ip));
 
 	char *command = "DCC SEND";
-	size_t s = strlen(filename) + strlen(shared_path) + 1;
-	char *full_filename = calloc(s, sizeof (char));
-
-	strcpy(full_filename, shared_path);
-	strcpy(full_filename+strlen(shared_path), filename);
-
+	char *full_filename = strconcat(shared_path, filename);
 	unsigned long filesize = fsize(full_filename);
     size_t size = strlen(command) + strlen(filename) + strlen(ip) +
 				  strlen(port) + 20 /* (2**64).to_s.length */ + 5 + 2;
@@ -252,13 +259,13 @@ int init_processor(char *path)
 
         int idx;
         for (idx = 0, i = 0; i < dir_size; i++) {
-            char buf[BUF_SIZE];
             char *name = list[i];
             if (strncmp(name, ".", 1) != 0) {  /* Don't list hidden files and directories */
                 char *start = calloc(1024, sizeof(char));
-                snprintf(buf, BUF_SIZE, "%s/%s", path, name);
+                char *buf = strconcat(path, name);
                 s = malloc(sizeof(struct stat));
                 lstat(buf, s);
+                free(buf);
                 unsigned long size = s->st_size; /* Using long for supporting files >=4GiB */
                 unsigned int sizeMB = size/(1024*1024);
                 sprintf(start, "#%d [%uMB] %s\n", idx+1, sizeMB, name);
