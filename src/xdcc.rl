@@ -28,7 +28,7 @@ enum operation {
     botname = "loldrop";
 
     whitespace = space+;
-    multi = ("send" @{ op = SEND; } | "info" @{ op = INFO; } |"remove" @{ op = REMOVE; } ) whitespace "#"? digit+;
+    multi = ("send" @{ op = SEND; } | "info" @{ op = INFO; } |"remove" @{ op = REMOVE; } ) whitespace "#"? (digit+ >{ digit_start = p; } @{ digit_end = p+1; } );
     single = ( "list" @{ op = LIST; } | "remove" @{ op = REMOVE; } );
     filler = ":" alnum+ ("!" >{ nick_size = p-nick_start; }) address " PRIVMSG " botname whitespace ":" whitespace*;
 
@@ -214,7 +214,8 @@ int _xdcc_process(char *string, int len, int sockfd)
 {
     int cs;
     char *p = string, *pe, *remote_nick, *nick_start, *command;
-    size_t nick_size;
+    char *digit_start = NULL, *digit_end = NULL, *digits;
+    size_t nick_size, s;
     enum operation op = 0;
 
     nick_start = string+1;
@@ -233,12 +234,20 @@ int _xdcc_process(char *string, int len, int sockfd)
     strncpy(remote_nick, nick_start, nick_size);
     printf("Remote nick: %s\n", remote_nick);
     printf("Command: %s\n", command);
+    int desired_file;
 
     switch(op) {
         case LIST:
             xdcc_list(remote_nick, sockfd);
             break;
 		case SEND:
+            if (digit_start && digit_end) {
+                s = digit_end - digit_start;
+                digits = calloc(s+1, sizeof(char));
+                strncpy(digits, digit_start, s);
+                printf("%s\n", digits);
+                desired_file = atoi(digits)-1;
+            }
 			xdcc_send("poo.txt", remote_nick, sockfd);
 			break;
         default:
