@@ -9,7 +9,6 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
-#define SHARED_PATH "/Users/meqif/Downloads/[OMDA]_AZUMANGA_DAIOH_01-26/"
 #define BUF_SIZE 1000
 #define BOTNAME loldrop
 
@@ -19,6 +18,7 @@ struct file_data {
     struct stat *info;
 };
 
+char *shared_path;
 int nfiles;
 struct file_data *files;
 
@@ -90,8 +90,6 @@ off_t fsize(char *filename)
 static
 int xdcc_list(char *remote_nick, int sockfd)
 {
-//    return cmd_listar(SHARED_PATH, remote_nick, sockfd);
-
     int i;
     for (i = 0; i < nfiles; i++) {
         send_message(remote_nick, "PRIVMSG", files[i].filedata, sockfd);
@@ -121,11 +119,11 @@ int xdcc_send(char *filename, char *remote_nick, int sockfd)
     int addr = htonl(foo(ip));
 
 	char *command = "DCC SEND";
-	size_t s = strlen(filename) + strlen(SHARED_PATH) + 1;
+	size_t s = strlen(filename) + strlen(shared_path) + 1;
 	char *full_filename = calloc(s, sizeof (char));
 
-	strcpy(full_filename, SHARED_PATH);
-	strcpy(full_filename+strlen(SHARED_PATH), filename);
+	strcpy(full_filename, shared_path);
+	strcpy(full_filename+strlen(shared_path), filename);
 
 	unsigned long filesize = fsize(full_filename);
     size_t size = strlen(command) + strlen(filename) + strlen(ip) +
@@ -203,7 +201,6 @@ int _xdcc_process(char *string, int len, int sockfd)
                 s = digit_end - digit_start;
                 digits = calloc(s+1, sizeof(char));
                 strncpy(digits, digit_start, s);
-                printf("%s\n", digits);
                 desired_file = atoi(digits)-1;
             }
             if (desired_file >= 0)
@@ -229,6 +226,7 @@ int init_processor(char *path)
     struct stat *s;
     DIR *dir = NULL;
 
+    shared_path = path;
     dir = opendir(path);
 
     if (dir != NULL) {
@@ -264,7 +262,6 @@ int init_processor(char *path)
                 unsigned long size = s->st_size; /* Using long for supporting files >=4GiB */
                 unsigned int sizeMB = size/(1024*1024);
                 sprintf(start, "#%d [%uMB] %s\n", idx+1, sizeMB, name);
-                //files[idx] = malloc(sizeof(struct file_data));
                 files[idx].filename = strdup(name);
                 files[idx].filedata = start;
                 files[idx].info = s;
