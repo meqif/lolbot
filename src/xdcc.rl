@@ -18,7 +18,7 @@ struct file_data {
     struct stat *info;
 };
 
-char *shared_path;
+char *shared_path, *ip;
 int nfiles;
 struct file_data *files;
 
@@ -127,7 +127,6 @@ int xdcc_send(char *filename, char *remote_nick, int sockfd)
 	listen(newsock, 4);
 
     // Send details to client
-	char *ip = "78.130.14.202";
     int addr = htonl(foo(ip));
 
 	char *command = "DCC SEND";
@@ -233,6 +232,7 @@ int init_processor(char *path)
     struct stat *s;
     DIR *dir = NULL;
 
+    ip = get_external_ip();
     shared_path = path;
     dir = opendir(path);
 

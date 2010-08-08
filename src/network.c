@@ -68,4 +68,29 @@ int create_socket(char *hostname, char *port)
     return sockfd;
 }
 
+char *get_external_ip()
+{
+    char *ip, *buf = malloc(1024 * sizeof(char));
+    int sockfd;
+    FILE *interwebs;
+
+    sockfd = create_socket("whatismyip.org", "80");
+    send(sockfd, "GET / HTTP/1.0\r\n\r\n", 18, 0);
+
+    interwebs = fdopen(sockfd, "r");
+    while(!feof(interwebs)) {
+        memset(buf, 0, 1024*sizeof(char));
+        fgets(buf, 1024, interwebs);
+    }
+
+    ip = calloc(strlen(buf)+1, sizeof(char));
+    strcpy(ip, buf);
+
+    free(buf);
+    fclose(interwebs);
+    close(sockfd);
+
+    return ip;
+}
+
 // vim: et ts=4 sw=4 sts=4

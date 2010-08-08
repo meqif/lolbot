@@ -38,8 +38,8 @@ int main(int argc, const char *argv[])
     while (1) {
         memset(buf, 0, BUFSIZE);
         fgets(buf, BUFSIZE, interwebs);
-        if (xdcc_process(buf, sockfd))
-            printf("%s", buf);
+        printf("%s", buf);
+        xdcc_process(buf, sockfd);
     }
 
     err = send(sockfd, "QUIT\r\n", 6, 0);
