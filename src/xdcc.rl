@@ -11,6 +11,7 @@
 
 #define BUF_SIZE 1000
 #define BOTNAME loldrop
+#define MAX_FILE_SIZE 20 /* (2**64).to_s.length */
 
 struct file_data {
     char *filename;
@@ -58,6 +59,7 @@ char *strconcat(char *s1, char *s2)
     return s3;
 }
 
+/* Converts an IPv4 address given in a string to the corresponding integer */
 int foo(char *str)
 {
     union {
@@ -133,7 +135,7 @@ int xdcc_send(char *filename, char *remote_nick, int sockfd)
 	char *full_filename = strconcat(shared_path, filename);
 	unsigned long filesize = fsize(full_filename);
     size_t size = strlen(command) + strlen(filename) + strlen(ip) +
-				  strlen(port) + 20 /* (2**64).to_s.length */ + 5 + 2;
+				  strlen(port) + MAX_FILE_SIZE + 5 + 2;
 	char *info = calloc(size+1, sizeof (char));
 	snprintf(info, size, "%c%s %s %u %d %lu%c", '\1', command, filename, addr, porti, filesize, '\1');
     send_message(remote_nick, "PRIVMSG", info, sockfd);
@@ -230,10 +232,12 @@ int init_processor(char *path)
 {
     struct dirent *d;
     struct stat *s;
-    DIR *dir = NULL;
+    DIR *dir;
 
     ip = get_external_ip();
     shared_path = path;
+
+    /* Initialize file list cache */
     dir = opendir(path);
 
     if (dir != NULL) {
@@ -249,7 +253,7 @@ int init_processor(char *path)
         files = malloc(dir_size * sizeof(struct file_data));
         char *list[dir_size];
         while ( (d = readdir(dir)) ) {
-            if (d->d_ino != 0)                 /* Ignore invalid inodes */
+            if (d->d_ino != 0) /* Ignore invalid inodes */
                 list[i++] = strdup(d->d_name);
         }
         list[i] = NULL;
