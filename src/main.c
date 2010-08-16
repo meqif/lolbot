@@ -14,6 +14,14 @@
 #define PORT "6667"
 #define SHARED_PATH "/Users/meqif/Downloads/[OMDA]_AZUMANGA_DAIOH_01-26/"
 
+static void usage() {
+    fprintf(stderr, "usage: loldrop [options]\n"
+                    "  -s  --server\tirc server to connect\n"
+                    "  -p  --port\tirc server's port (optional, defaults to 6667)\n"
+                    "  -d  --path\tpath to shared directory\n");
+    exit(1);
+}
+
 int main(int argc, const char *argv[])
 {
     int sockfd, err;
