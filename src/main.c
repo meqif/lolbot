@@ -8,28 +8,60 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <getopt.h>
 
 #define BUFSIZE 128
-#define SERVER "irc.oftc.net"
-#define PORT "6667"
-#define SHARED_PATH "/Users/meqif/Downloads/[OMDA]_AZUMANGA_DAIOH_01-26/"
+#define DEFAULT_PORT "6667"
+
+static struct option long_opts[] = {
+    { "help",      no_argument,       NULL, 'h' },
+    { "server",    required_argument, NULL, 's' },
+    { "port",      required_argument, NULL, 'p' },
+    { "path",      required_argument, NULL, 'd' },
+    { NULL,        0,                 NULL,  0  }
+};
 
 static void usage() {
     fprintf(stderr, "usage: loldrop [options]\n"
+                    "  -h  --help\tprint this usage and exit\n"
                     "  -s  --server\tirc server to connect\n"
                     "  -p  --port\tirc server's port (optional, defaults to 6667)\n"
                     "  -d  --path\tpath to shared directory\n");
     exit(1);
 }
 
-int main(int argc, const char *argv[])
+int main(int argc, char *argv[])
 {
-    int sockfd, err;
+    int sockfd, err, ch;
     char *buf = malloc(BUFSIZE * sizeof(char));
+    char *shared_path = NULL, *server = NULL, *port = DEFAULT_PORT;
 
-    init_processor(SHARED_PATH);
+    while ((ch = getopt_long(argc, argv, "hspd", long_opts, NULL)) != -1) {
+        switch (ch) {
+            case 's':
+                server = optarg ? optarg : argv[optind];
+                break;
+            case 'p':
+                port = optarg ? optarg : argv[optind];
+                break;
+            case 'd':
+                shared_path = optarg ? optarg : argv[optind];
+                break;
+            case 'h':
+            default:
+                usage();
+        }
+    }
 
-    sockfd = create_socket(SERVER, PORT);
+    argc -= optind;
+    argv += optind;
+
+    if (!shared_path || !server)
+        usage();
+
+    init_processor(shared_path);
+
+    sockfd = create_socket(server, port);
 
     FILE *interwebs = fdopen(sockfd, "r+");
 
