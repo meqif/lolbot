@@ -88,6 +88,10 @@ char *get_external_ip()
     ip = calloc(strlen(buf)+1, sizeof(char));
     strcpy(ip, buf);
 
+#ifdef DEBUG
+    printf("Got external IP: %s\n", ip);
+#endif
+
     free(buf);
     fclose(interwebs);
     close(sockfd);
