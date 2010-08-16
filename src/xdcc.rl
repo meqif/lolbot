@@ -177,7 +177,7 @@ void xdcc_remove(int position)
 static
 int _xdcc_process(char *string, int len, int sockfd)
 {
-    int cs;
+    int cs, desired_file;
     char *p = string, *pe, *remote_nick, *nick_start, *command;
     char *digit_start = NULL, *digit_end = NULL, *digits;
     size_t nick_size, s;
@@ -197,9 +197,10 @@ int _xdcc_process(char *string, int len, int sockfd)
 
     remote_nick = calloc(nick_size+1, sizeof (char));
     strncpy(remote_nick, nick_start, nick_size);
+#ifdef DEBUG
     printf("Remote nick: %s\n", remote_nick);
     printf("Command: %s\n", command);
-    int desired_file;
+#endif
 
     switch(op) {
         case LIST:
