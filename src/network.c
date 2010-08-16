@@ -7,6 +7,8 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
+#define BUFSIZE 1024
+
 void send_message(char *remote_nick, char *type, char *message, int sockfd)
 {
     size_t s = strlen(message) + strlen(type) + strlen(remote_nick) + 5 + 1;
@@ -70,7 +72,7 @@ int create_socket(char *hostname, char *port)
 
 char *get_external_ip()
 {
-    char *ip, *buf = malloc(1024 * sizeof(char));
+    char *ip, *buf = malloc(BUFSIZE * sizeof(char));
     int sockfd;
     FILE *interwebs;
 
@@ -79,8 +81,8 @@ char *get_external_ip()
 
     interwebs = fdopen(sockfd, "r");
     while(!feof(interwebs)) {
-        memset(buf, 0, 1024*sizeof(char));
-        fgets(buf, 1024, interwebs);
+        memset(buf, 0, BUFSIZE * sizeof(char));
+        fgets(buf, BUFSIZE, interwebs);
     }
 
     ip = calloc(strlen(buf)+1, sizeof(char));
