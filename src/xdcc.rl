@@ -16,6 +16,7 @@
 
 struct file_data {
     char *filename;
+    char *absolute_path;
     char *filedata;
     struct stat *info;
 };
@@ -47,18 +48,6 @@ enum operation {
 }%%
 
 %% write data;
-
-static
-char *strconcat(char *s1, char *s2)
-{
-	size_t size = strlen(s1) + strlen(s2) + 1;
-	char *s3 = calloc(size, sizeof (char));
-
-	strcpy(s3, s1);
-	strcpy(s3+strlen(s1), s2);
-
-    return s3;
-}
 
 /* Converts an IPv4 address given in a string to the corresponding integer */
 int foo(char *str)
@@ -120,7 +109,7 @@ char *xdcc_info(char *string)
 }
 
 static
-int xdcc_send(char *filename, char *remote_nick, int sockfd)
+int xdcc_send(struct file_data requested_file, char *remote_nick, int sockfd)
 {
 	char *port = "8888";
     int porti = atoi(port);
@@ -133,12 +122,12 @@ int xdcc_send(char *filename, char *remote_nick, int sockfd)
     int addr = htonl(foo(ip));
 
 	char *command = "DCC SEND";
-	char *full_filename = strconcat(shared_path, filename);
-	unsigned long filesize = fsize(full_filename);
-    size_t size = strlen(command) + strlen(filename) + strlen(ip) +
+	unsigned long filesize = fsize(requested_file.absolute_path);
+    size_t size = strlen(command) + strlen(requested_file.filename) + strlen(ip) +
 				  strlen(port) + MAX_FILE_SIZE + 5 + 2;
 	char *info = calloc(size+1, sizeof (char));
-	snprintf(info, size, "%c%s %s %u %d %lu%c", '\1', command, filename, addr, porti, filesize, '\1');
+	snprintf(info, size, "%c%s %s %u %d %lu%c", '\1', command,
+            requested_file.filename, addr, porti, filesize, '\1');
     send_message(remote_nick, "PRIVMSG", info, sockfd);
 
     // Send/Resume file
@@ -146,7 +135,7 @@ int xdcc_send(char *filename, char *remote_nick, int sockfd)
     socklen_t addr_size;
 	int sock = accept(newsock, &their_addr, &addr_size);
 
-	FILE *file = fopen(full_filename, "r");
+	FILE *file = fopen(requested_file.absolute_path, "r");
 	unsigned char *buffer = malloc(FILE_BUFSIZE);
 	char ack[4];
 
@@ -214,7 +203,7 @@ int _xdcc_process(char *string, int len, int sockfd)
                 desired_file = atoi(digits)-1;
             }
             if (desired_file >= 0)
-			    xdcc_send(files[desired_file].filename, remote_nick, sockfd);
+			    xdcc_send(files[desired_file], remote_nick, sockfd);
 			break;
         default:
             send_message(remote_nick, "PRIVMSG", command, sockfd);
@@ -267,15 +256,17 @@ int init_processor(char *path)
         for (idx = 0, i = 0; i < dir_size; i++) {
             char *name = list[i];
             if (strncmp(name, ".", 1) != 0) {  /* Don't list hidden files and directories */
-                char *buf = strconcat(path, name);
+                char *buf = calloc(strlen(path) + strlen(name) + 2, sizeof(char));
+                sprintf(buf, "%s/%s", path, name);
+                fprintf(stderr, "%s\n", buf);
                 char *start = calloc(strlen(buf)+100, sizeof(char));
                 s = malloc(sizeof(struct stat));
                 lstat(buf, s);
-                free(buf);
                 unsigned long size = s->st_size; /* Using long for supporting files >=4GiB */
                 unsigned int sizeMB = size/(1024*1024);
                 sprintf(start, "#%d [%uMB] %s\n", idx+1, sizeMB, name);
                 files[idx].filename = strdup(name);
+                files[idx].absolute_path = buf;
                 files[idx].filedata = strdup(start);
                 files[idx].info = s;
                 free(start);
