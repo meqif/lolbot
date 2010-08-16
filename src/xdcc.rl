@@ -86,9 +86,9 @@ int string_cmp(const void *a, const void *b)
 static
 off_t fsize(char *filename)
 {
-	struct stat *buf = malloc(sizeof (struct stat));
-	stat(filename, buf);
-	return buf->st_size;
+    struct stat *buf = malloc(sizeof (struct stat));
+    stat(filename, buf);
+    return buf->st_size;
 }
 
 static
@@ -111,49 +111,49 @@ char *xdcc_info(char *string)
 static
 int xdcc_send(struct file_data requested_file, char *remote_nick, int sockfd)
 {
-	char *port = "8888";
+    char *port = "8888";
     int porti = atoi(port);
 
     // Create listening socket
     int newsock = create_socket(NULL, port);
-	listen(newsock, 4);
+    listen(newsock, 4);
 
     // Send details to client
     int addr = htonl(foo(ip));
 
-	char *command = "DCC SEND";
-	unsigned long filesize = fsize(requested_file.absolute_path);
+    char *command = "DCC SEND";
+    unsigned long filesize = fsize(requested_file.absolute_path);
     size_t size = strlen(command) + strlen(requested_file.filename) + strlen(ip) +
-				  strlen(port) + MAX_FILE_SIZE + 5 + 2;
-	char *info = calloc(size+1, sizeof (char));
-	snprintf(info, size, "%c%s %s %u %d %lu%c", '\1', command,
+                  strlen(port) + MAX_FILE_SIZE + 5 + 2;
+    char *info = calloc(size+1, sizeof (char));
+    snprintf(info, size, "%c%s %s %u %d %lu%c", '\1', command,
             requested_file.filename, addr, porti, filesize, '\1');
     send_message(remote_nick, "PRIVMSG", info, sockfd);
 
     // Send/Resume file
-	struct sockaddr their_addr;
+    struct sockaddr their_addr;
     socklen_t addr_size;
-	int sock = accept(newsock, &their_addr, &addr_size);
+    int sock = accept(newsock, &their_addr, &addr_size);
 
-	FILE *file = fopen(requested_file.absolute_path, "r");
-	unsigned char *buffer = malloc(FILE_BUFSIZE);
-	char ack[4];
+    FILE *file = fopen(requested_file.absolute_path, "r");
+    unsigned char *buffer = malloc(FILE_BUFSIZE);
+    char ack[4];
 
-	while (!feof(file)) {
-		memset(buffer, FILE_BUFSIZE, sizeof(char));
+    while (!feof(file)) {
+        memset(buffer, FILE_BUFSIZE, sizeof(char));
 
-		// Send block
-		int len = fread(buffer, sizeof(char), FILE_BUFSIZE, file);
-		send(sock, buffer, len, 0);
+        // Send block
+        int len = fread(buffer, sizeof(char), FILE_BUFSIZE, file);
+        send(sock, buffer, len, 0);
 
-		// Receive 4-byte ACK
-		recv(sock, ack, 4*sizeof(char), 0);
-	}
+        // Receive 4-byte ACK
+        recv(sock, ack, 4*sizeof(char), 0);
+    }
 
-	close(sock);
+    close(sock);
     close(newsock);
 
-	return 0;
+    return 0;
 }
 
 static
@@ -195,7 +195,7 @@ int _xdcc_process(char *string, int len, int sockfd)
         case LIST:
             xdcc_list(remote_nick, sockfd);
             break;
-		case SEND:
+        case SEND:
             if (digit_start && digit_end) {
                 s = digit_end - digit_start;
                 digits = calloc(s+1, sizeof(char));
@@ -203,8 +203,8 @@ int _xdcc_process(char *string, int len, int sockfd)
                 desired_file = atoi(digits)-1;
             }
             if (desired_file >= 0)
-			    xdcc_send(files[desired_file], remote_nick, sockfd);
-			break;
+                xdcc_send(files[desired_file], remote_nick, sockfd);
+            break;
         default:
             send_message(remote_nick, "PRIVMSG", command, sockfd);
             break;
