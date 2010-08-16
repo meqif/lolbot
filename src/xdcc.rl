@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 
 #define BUF_SIZE 1000
+#define FILE_BUFSIZE 10240
 #define BOTNAME loldrop
 #define MAX_FILE_SIZE 20 /* (2**64).to_s.length */
 
@@ -146,14 +147,14 @@ int xdcc_send(char *filename, char *remote_nick, int sockfd)
 	int sock = accept(newsock, &their_addr, &addr_size);
 
 	FILE *file = fopen(full_filename, "r");
-	unsigned char *buffer = malloc(1024);
+	unsigned char *buffer = malloc(FILE_BUFSIZE);
 	char ack[4];
 
 	while (!feof(file)) {
-		memset(buffer, 1024, sizeof(char));
+		memset(buffer, FILE_BUFSIZE, sizeof(char));
 
 		// Send block
-		int len = fread(buffer, sizeof(char), 1024, file);
+		int len = fread(buffer, sizeof(char), FILE_BUFSIZE, file);
 		send(sock, buffer, len, 0);
 
 		// Receive 4-byte ACK
