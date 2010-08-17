@@ -44,6 +44,11 @@ int main(int argc, char *argv[])
     while ((ch = getopt_long(argc, argv, "hspdcn", long_opts, NULL)) != -1) {
         ptr = optarg ? optarg : argv[optind];
 
+        if (!ptr) {
+            fprintf(stderr, "Messed up argument, maybe your shell is responsible?\n");
+            return 1;
+        }
+
         switch (ch) {
             case 's':
                 server = ptr;
