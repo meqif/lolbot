@@ -37,9 +37,8 @@ static void usage() {
 int main(int argc, char *argv[])
 {
     int sockfd, err, ch;
-    char *buf = malloc(BUFSIZE * sizeof(char));
     char *shared_path = NULL, *server = NULL, *port = DEFAULT_PORT,
-         *channel = NULL, *nick = NULL, *message, *ptr;
+         *channel = NULL, *nick = NULL, *message, *ptr, *buf;
 
     while ((ch = getopt_long(argc, argv, "hspdcn", long_opts, NULL)) != -1) {
         ptr = optarg ? optarg : argv[optind];
@@ -105,6 +104,7 @@ int main(int argc, char *argv[])
     printf("%d\n", err);
     free(message);
 
+    buf = malloc(BUFSIZE * sizeof(char));
     while (1) {
         memset(buf, 0, BUFSIZE);
         fgets(buf, BUFSIZE, interwebs);
