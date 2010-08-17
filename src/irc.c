@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sys/socket.h>
 
+#define MAX_FILE_SIZE 20 /* (2**64).to_s.length */
 #define SEND(socket, message) send(socket, message, strlen(message), 0)
 
 int irc_user(int sockfd, char *nick, char *real_name)
@@ -73,6 +74,22 @@ int irc_notice(int sockfd, char *remote_nick, char *content)
     sprintf(message, "NOTICE %s :%s\r\n", remote_nick, content);
     err = SEND(sockfd, message);
     free(message);
+
+    return err;
+}
+
+int irc_dcc_send(int sockfd, char *remote_nick, char *filename,
+                 unsigned long filesize, unsigned int address, int port)
+{
+    int err;
+    char *message, *command = "DCC SEND";
+
+    size_t size = strlen(command) + strlen(filename) + 10 +
+                  strlen("65535") + MAX_FILE_SIZE + 5 + 2;
+    message = calloc(size+1, sizeof (char));
+    snprintf(message, size, "%c%s %s %u %d %lu%c", '\1', command,
+            filename, address, port, filesize, '\1');
+    err = irc_privmsg(sockfd, remote_nick, message);
 
     return err;
 }

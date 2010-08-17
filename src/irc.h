@@ -9,5 +9,7 @@ int irc_join(int sockfd, char *channel);
 int irc_quit(int sockfd);
 int irc_privmsg(int sockfd, char *remote_nick, char *content);
 int irc_notice(int sockfd, char *remote_nick, char *content);
+int irc_dcc_send(int sockfd, char *remote_nick, char *filename,
+                 unsigned long filesize, unsigned int address, int port);
 
 #endif /* IRC_H */

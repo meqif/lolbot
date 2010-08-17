@@ -13,7 +13,6 @@
 #define BUF_SIZE 1000
 #define FILE_BUFSIZE 10240
 #define BOTNAME loldrop
-#define MAX_FILE_SIZE 20 /* (2**64).to_s.length */
 
 struct file_data {
     char *filename;
@@ -122,14 +121,8 @@ int xdcc_send(struct file_data requested_file, char *remote_nick, int sockfd)
     // Send details to client
     int addr = htonl(foo(ip));
 
-    char *command = "DCC SEND";
     unsigned long filesize = fsize(requested_file.absolute_path);
-    size_t size = strlen(command) + strlen(requested_file.filename) + strlen(ip) +
-                  strlen(port) + MAX_FILE_SIZE + 5 + 2;
-    char *info = calloc(size+1, sizeof (char));
-    snprintf(info, size, "%c%s %s %u %d %lu%c", '\1', command,
-            requested_file.filename, addr, porti, filesize, '\1');
-    irc_privmsg(sockfd, remote_nick, info);
+    irc_dcc_send(sockfd, remote_nick, requested_file.filename, filesize, addr, porti);
 
     // Send/Resume file
     struct sockaddr their_addr;
