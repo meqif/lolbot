@@ -9,17 +9,6 @@
 
 #define BUFSIZE 1024
 
-void send_message(char *remote_nick, char *type, char *message, int sockfd)
-{
-    size_t s = strlen(message) + strlen(type) + strlen(remote_nick) + 5 + 1;
-    char *cmd = calloc(s, sizeof (char));
-    snprintf(cmd, s, "%s %s :%s\r\n", type, remote_nick, message);
-#ifdef DEBUG
-    printf("%s\n", cmd);
-#endif
-    send(sockfd, cmd, strlen(cmd), 0);
-}
-
 int create_socket(char *hostname, char *port)
 {
     int sockfd, err;

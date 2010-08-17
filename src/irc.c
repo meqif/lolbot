@@ -49,4 +49,32 @@ int irc_quit(int sockfd)
     return SEND(sockfd, "QUIT\r\n");
 }
 
+int irc_privmsg(int sockfd, char *remote_nick, char *content)
+{
+    int err;
+    char *message;
+
+    message = calloc(12 + strlen(content) + strlen(remote_nick) + 1,
+            sizeof(char));
+    sprintf(message, "PRIVMSG %s :%s\r\n", remote_nick, content);
+    err = SEND(sockfd, message);
+    free(message);
+
+    return err;
+}
+
+int irc_notice(int sockfd, char *remote_nick, char *content)
+{
+    int err;
+    char *message;
+
+    message = calloc(11 + strlen(content) + strlen(remote_nick) + 1,
+            sizeof(char));
+    sprintf(message, "NOTICE %s :%s\r\n", remote_nick, content);
+    err = SEND(sockfd, message);
+    free(message);
+
+    return err;
+}
+
 // vim: et ts=4 sw=4 sts=4

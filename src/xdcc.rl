@@ -1,4 +1,5 @@
 #include "network.h"
+#include "irc.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -96,7 +97,7 @@ int xdcc_list(char *remote_nick, int sockfd)
 {
     int i;
     for (i = 0; i < nfiles; i++) {
-        send_message(remote_nick, "PRIVMSG", files[i].filedata, sockfd);
+        irc_privmsg(sockfd, remote_nick, files[i].filedata);
     }
 
     return 0;
@@ -128,7 +129,7 @@ int xdcc_send(struct file_data requested_file, char *remote_nick, int sockfd)
     char *info = calloc(size+1, sizeof (char));
     snprintf(info, size, "%c%s %s %u %d %lu%c", '\1', command,
             requested_file.filename, addr, porti, filesize, '\1');
-    send_message(remote_nick, "PRIVMSG", info, sockfd);
+    irc_privmsg(sockfd, remote_nick, info);
 
     // Send/Resume file
     struct sockaddr their_addr;
@@ -206,7 +207,7 @@ int _xdcc_process(char *string, int len, int sockfd)
                 xdcc_send(files[desired_file], remote_nick, sockfd);
             break;
         default:
-            send_message(remote_nick, "PRIVMSG", command, sockfd);
+            irc_privmsg(sockfd, remote_nick, command);
             break;
     }
 
