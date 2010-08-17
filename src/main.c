@@ -56,6 +56,8 @@ int main(int argc, char *argv[])
                 break;
             case 'c':
                 channel = optarg ? optarg : argv[optind];
+                if (*channel == '#')
+                    channel++;
                 break;
             case 'h':
             default:
@@ -88,9 +90,6 @@ int main(int argc, char *argv[])
     free(message);
 
     sleep(1);
-
-    if (*channel == '#')
-        channel++;
 
     message = calloc(8 + strlen(channel) + 1, sizeof(char));
     sprintf(message, "JOIN #%s\r\n", channel);
