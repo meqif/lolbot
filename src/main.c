@@ -78,7 +78,10 @@ int main(int argc, char *argv[])
     if (!shared_path || !server || !channel || !nick)
         usage();
 
-    init_processor(shared_path);
+    if (init_processor(shared_path)) {
+        fprintf(stderr, "Error initalizing data structures, bailing out.\n");
+        return 1;
+    }
 
     sockfd = create_socket(server, port);
 
