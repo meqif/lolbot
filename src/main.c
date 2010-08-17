@@ -1,16 +1,14 @@
 #include "xdcc.h"
 #include "network.h"
+#include "irc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <getopt.h>
 
 #define BUFSIZE 128
 #define DEFAULT_PORT "6667"
-
-#define SEND(socket, message) send(socket, message, strlen(message), 0)
 
 static struct option long_opts[] = {
     { "help",      no_argument,       NULL, 'h' },
@@ -38,7 +36,7 @@ int main(int argc, char *argv[])
 {
     int sockfd, err, ch;
     char *shared_path = NULL, *server = NULL, *port = DEFAULT_PORT,
-         *channel = NULL, *nick = NULL, *message, *ptr, *buf;
+         *channel = NULL, *nick = NULL, *ptr, *buf;
 
     while ((ch = getopt_long(argc, argv, "hspdcn", long_opts, NULL)) != -1) {
         ptr = optarg ? optarg : argv[optind];
@@ -87,25 +85,16 @@ int main(int argc, char *argv[])
 
     FILE *interwebs = fdopen(sockfd, "r+");
 
-    message = calloc(11 + 2 * strlen(nick) + 2 + 1, sizeof(char));
-    sprintf(message, "USER %s x x :%s\r\n", nick, nick);
-    err = SEND(sockfd, message);
+    err = irc_user(sockfd, nick, nick);
     printf("%d\n", err);
-    free(message);
 
-    message = calloc(7 + strlen(nick) + 1, sizeof(char));
-    sprintf(message, "NICK %s\r\n", nick);
-    err = SEND(sockfd, message);
+    err = irc_nick(sockfd, nick);
     printf("%d\n", err);
-    free(message);
 
     sleep(1);
 
-    message = calloc(8 + strlen(channel) + 1, sizeof(char));
-    sprintf(message, "JOIN #%s\r\n", channel);
-    err = SEND(sockfd, message);
+    err = irc_join(sockfd, channel);
     printf("%d\n", err);
-    free(message);
 
     buf = malloc(BUFSIZE * sizeof(char));
     while (1) {
@@ -115,7 +104,7 @@ int main(int argc, char *argv[])
         xdcc_process(buf, sockfd);
     }
 
-    err = SEND(sockfd, "QUIT\r\n");
+    err = irc_quit(sockfd);
     printf("%d\n", err);
 
     fclose(interwebs);
