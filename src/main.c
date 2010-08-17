@@ -39,24 +39,26 @@ int main(int argc, char *argv[])
     int sockfd, err, ch;
     char *buf = malloc(BUFSIZE * sizeof(char));
     char *shared_path = NULL, *server = NULL, *port = DEFAULT_PORT,
-         *channel = NULL, *nick = NULL, *message;
+         *channel = NULL, *nick = NULL, *message, *ptr;
 
     while ((ch = getopt_long(argc, argv, "hspdcn", long_opts, NULL)) != -1) {
+        ptr = optarg ? optarg : argv[optind];
+
         switch (ch) {
             case 's':
-                server = optarg ? optarg : argv[optind];
+                server = ptr;
                 break;
             case 'p':
-                port = optarg ? optarg : argv[optind];
+                port = ptr;
                 break;
             case 'd':
-                shared_path = optarg ? optarg : argv[optind];
+                shared_path = ptr;
                 break;
             case 'n':
-                nick = optarg ? optarg : argv[optind];
+                nick = ptr;
                 break;
             case 'c':
-                channel = optarg ? optarg : argv[optind];
+                channel = ptr;
                 if (*channel == '#')
                     channel++;
                 break;
