@@ -1,4 +1,4 @@
-#include "xdcc.h"
+#include "state_machine.h"
 #include "network.h"
 #include "irc.h"
 #include <stdio.h>

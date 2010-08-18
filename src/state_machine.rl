@@ -1,5 +1,7 @@
+#include "state_machine.h"
 #include "network.h"
 #include "irc.h"
+#include "xdcc.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -12,14 +14,6 @@
 
 #define BUF_SIZE 1000
 #define FILE_BUFSIZE 10240
-#define BOTNAME loldrop
-
-struct file_data {
-    char *filename;
-    char *absolute_path;
-    char *filedata;
-    struct stat *info;
-};
 
 char *shared_path, *ip;
 int nfiles;
@@ -53,31 +47,6 @@ enum operation {
 
 %% write data;
 
-/* Converts an IPv4 address given in a string to the corresponding integer */
-int foo(char *str)
-{
-    union {
-        int x;
-        unsigned char y[4];
-    } gamma;
-
-    char *ptr = str;
-    int i = 0;
-
-    while(i < 4) {
-        if (*str == '.' || *str == 0) {
-            char *tmp = calloc(4, sizeof(char));
-            strncpy(tmp, ptr, str-ptr);
-            gamma.y[i++] = atoi(tmp);
-            free(tmp);
-            ptr = str+1;
-        }
-        str++;
-    }
-
-    return gamma.x;
-}
-
 /* String comparison for quicksort */
 static
 int string_cmp(const void *a, const void *b)
@@ -85,80 +54,6 @@ int string_cmp(const void *a, const void *b)
     const char **ia = (const char **)a;
     const char **ib = (const char **)b;
     return strcmp(*ia, *ib);
-}
-
-static
-off_t fsize(char *filename)
-{
-    struct stat *buf = malloc(sizeof (struct stat));
-    stat(filename, buf);
-    return buf->st_size;
-}
-
-static
-int xdcc_list(char *remote_nick, int sockfd)
-{
-    int i;
-    for (i = 0; i < nfiles; i++) {
-        irc_privmsg(sockfd, remote_nick, files[i].filedata);
-    }
-
-    return 0;
-}
-
-static
-char *xdcc_info(char *string)
-{
-    return NULL;
-}
-
-static
-int xdcc_send(struct file_data requested_file, char *remote_nick, int sockfd)
-{
-    char *port = "8888";
-    int porti = atoi(port);
-
-    // Create listening socket
-    int newsock = create_socket(NULL, port);
-    listen(newsock, 4);
-
-    // Send details to client
-    int addr = htonl(foo(ip));
-
-    unsigned long filesize = fsize(requested_file.absolute_path);
-    irc_dcc_send(sockfd, remote_nick, requested_file.filename, filesize, addr, porti);
-
-    // Send/Resume file
-    struct sockaddr their_addr;
-    socklen_t addr_size;
-    int sock = accept(newsock, &their_addr, &addr_size);
-
-    FILE *file = fopen(requested_file.absolute_path, "r");
-    unsigned char *buffer = malloc(FILE_BUFSIZE);
-    char ack[4];
-
-    while (!feof(file)) {
-        memset(buffer, FILE_BUFSIZE, sizeof(char));
-
-        // Send block
-        int len = fread(buffer, sizeof(char), FILE_BUFSIZE, file);
-        send(sock, buffer, len, 0);
-
-        // Receive 4-byte ACK
-        recv(sock, ack, 4*sizeof(char), 0);
-    }
-
-    close(sock);
-    close(newsock);
-
-    return 0;
-}
-
-static
-void xdcc_remove(int position)
-{
-    if (position == -1)
-        return;
 }
 
 static

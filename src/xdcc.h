@@ -1,7 +1,9 @@
-#ifndef FSM_H
-#define FSM_H
+/* See LICENSE file for copyright and license details. */
 
-int xdcc_process(char *string, int sockfd);
-int init_processor(char *path);
+#ifndef XDCC_H
+#define XDCC_H
 
-#endif /* FSM_H */
+int xdcc_send(struct file_data requested_file, char *remote_nick, int sockfd);
+int xdcc_list(char *remote_nick, int sockfd);
+
+#endif /* XDCC_H */

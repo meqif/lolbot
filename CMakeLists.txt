@@ -7,13 +7,13 @@ IF(NOT RAGEL_EXECUTABLE)
 ENDIF(NOT RAGEL_EXECUTABLE)
 
 ADD_CUSTOM_COMMAND (
-    OUTPUT ${CMAKE_SOURCE_DIR}/src/xdcc.c
-    COMMAND ragel -G2 -o ${CMAKE_SOURCE_DIR}/src/xdcc.c ${CMAKE_SOURCE_DIR}/src/xdcc.rl
-    DEPENDS ${CMAKE_SOURCE_DIR}/src/xdcc.rl
+    OUTPUT ${CMAKE_SOURCE_DIR}/src/state_machine.c
+    COMMAND ragel -G2 -o ${CMAKE_SOURCE_DIR}/src/state_machine.c ${CMAKE_SOURCE_DIR}/src/state_machine.rl
+    DEPENDS ${CMAKE_SOURCE_DIR}/src/state_machine.rl
 )
 
 FILE(GLOB source src/*.c)
-LIST(APPEND source src/xdcc.c)
+LIST(APPEND source src/state_machine.c)
 
 set(CMAKE_C_FLAGS "-Wall")
 add_executable (loldrop ${source} src/main.c)
