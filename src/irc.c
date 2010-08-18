@@ -107,4 +107,20 @@ int irc_dcc_send(int sockfd, char *remote_nick, char *filename,
     return err;
 }
 
+int irc_dcc_accept(int sockfd, char *remote_nick, char *filename,
+                 int port, unsigned long resume_offset)
+{
+    int err;
+    char *message, *command = "DCC ACCEPT";
+
+    size_t size = strlen(command) + strlen(filename) + 20 +
+                  strlen("65535") + 5 + 2;
+    message = calloc(size+1, sizeof (char));
+    snprintf(message, size, "\01%s %s %d %lu\01", command,
+            filename, port, resume_offset);
+    err = irc_privmsg(sockfd, remote_nick, message);
+
+    return err;
+}
+
 // vim: et ts=4 sw=4 sts=4

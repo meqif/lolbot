@@ -12,5 +12,7 @@ int irc_privmsg(int sockfd, char *remote_nick, char *content);
 int irc_notice(int sockfd, char *remote_nick, char *content);
 int irc_dcc_send(int sockfd, char *remote_nick, char *filename,
                  unsigned long filesize, unsigned int address, int port);
+int irc_dcc_accept(int sockfd, char *remote_nick, char *filename,
+                 int port, unsigned long resume_offset);
 
 #endif /* IRC_H */
