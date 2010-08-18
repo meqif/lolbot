@@ -27,19 +27,32 @@ enum operation {
 };
 
 %%{
-    machine clang;
+    machine irc;
 
     address = "~" (alnum|"@"|"-"|".")+;
     botname = "loldrop";
 
     whitespace = space+;
-    multi = ("send" @{ op = SEND; } | "info" @{ op = INFO; } |"remove" @{ op = REMOVE; } ) whitespace "#"? (digit+ >{ digit_start = p; } @{ digit_end = p+1; } );
-    single = ( "list" @{ op = LIST; } | "remove" @{ op = REMOVE; } );
+    multi =
+        (
+            "send"   @{ op = SEND; } |
+            "info"   @{ op = INFO; } |
+            "remove" @{ op = REMOVE; }
+        ) whitespace "#"? (digit+ >{ digit_start = p; } @{ digit_end = p+1; } );
+
+    single =
+        (
+            "list"   @{ op = LIST; } |
+            "remove" @{ op = REMOVE; }
+        );
+
     filler = ":" alnum+ ("!" >{ nick_size = p-nick_start; }) address " PRIVMSG " botname whitespace ":" whitespace*;
+
+    xdcc = ("xdcc" >{ command = p; }) whitespace (single|multi);
     ping = ("PING" @{ op = PING; }) whitespace ":"? ((alnum|".")+ >{nick_start = p, nick_size = 0;} @{nick_size++;});
 
     main :=
-            ( filler ("xdcc" >{ command = p; }) whitespace (single|multi) whitespace* ) |
+            ( filler xdcc whitespace* ) |
             ping whitespace*;
 }%%
 
