@@ -165,7 +165,9 @@ int init_processor(char *path)
             if (strncmp(name, ".", 1) != 0) {  /* Don't list hidden files and directories */
                 char *buf = calloc(strlen(path) + strlen(name) + 2, sizeof(char));
                 sprintf(buf, "%s/%s", path, name);
+#ifdef DEBUG
                 fprintf(stderr, "%s\n", buf);
+#endif
                 char *start = calloc(strlen(buf)+100, sizeof(char));
                 s = malloc(sizeof(struct stat));
                 lstat(buf, s);

@@ -100,7 +100,9 @@ int main(int argc, char *argv[])
     while (1) {
         memset(buf, 0, BUFSIZE);
         fgets(buf, BUFSIZE, interwebs);
+#ifdef DEBUG
         printf("%s", buf);
+#endif
         xdcc_process(buf, sockfd);
     }
 

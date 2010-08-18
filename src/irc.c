@@ -4,7 +4,11 @@
 #include <sys/socket.h>
 
 #define MAX_FILE_SIZE 20 /* (2**64).to_s.length */
-#define SEND(socket, message) send(socket, message, strlen(message), 0)
+#ifndef DEBUG
+    #define SEND(socket, message) send(socket, message, strlen(message), 0)
+#else
+    #define SEND(socket, message) fprintf(stderr, "%s", message); send(socket, message, strlen(message), 0)
+#endif
 
 int irc_user(int sockfd, char *nick, char *real_name)
 {
