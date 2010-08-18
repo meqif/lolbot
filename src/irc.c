@@ -50,6 +50,19 @@ int irc_quit(int sockfd)
     return SEND(sockfd, "QUIT\r\n");
 }
 
+int irc_pong(int sockfd, char *server)
+{
+    int err;
+    char *message;
+
+    message = calloc(strlen("PONG ") + strlen(server) + 3, sizeof(char));
+    sprintf(message, "PONG %s\r\n", server);
+    err = SEND(sockfd, message);
+    free(message);
+
+    return err;
+}
+
 int irc_privmsg(int sockfd, char *remote_nick, char *content)
 {
     int err;
