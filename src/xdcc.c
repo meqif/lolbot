@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <dirent.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <unistd.h>
@@ -13,7 +12,6 @@
 
 #define BUF_SIZE 1000
 #define FILE_BUFSIZE 10240
-#define BOTNAME loldrop
 
 char *shared_path, *ip;
 int nfiles;

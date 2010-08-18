@@ -9,8 +9,6 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
 
 #define BUF_SIZE 1000
 #define FILE_BUFSIZE 10240
