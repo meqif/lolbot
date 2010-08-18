@@ -1,4 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
+set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG DEBUG=1)
 
 # Find Ragel executable
 FIND_PROGRAM(RAGEL_EXECUTABLE ragel)
