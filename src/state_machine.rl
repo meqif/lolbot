@@ -16,6 +16,7 @@
 char *shared_path, *ip;
 int nfiles;
 struct file_data *files;
+extern struct xdcc_request *request;
 
 static
 enum operation {
@@ -23,6 +24,7 @@ enum operation {
     INFO,
     LIST,
     REMOVE,
+    RESUME,
     PING
 };
 
@@ -110,7 +112,7 @@ int _xdcc_process(char *string, int len, int sockfd)
                 desired_file = atoi(digits)-1;
             }
             if (desired_file >= 0)
-                xdcc_send(files[desired_file], remote_nick, sockfd);
+                xdcc_send(&files[desired_file], remote_nick, sockfd);
             break;
         default:
             irc_privmsg(sockfd, remote_nick, command);
