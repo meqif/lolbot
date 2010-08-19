@@ -1,7 +1,6 @@
 CFLAGS=-g -Wall -Isrc -DDEBUG
 
-SRCS=$(wildcard src/*.c)
-SOURCES=$(filter-out src/main.c, $(SRCS))
+SOURCES=$(wildcard src/*.c src/**/*.c)
 #OBJECTS=$(patsubst %.c,%.o,${SOURCES})
 OBJECTS=$(SOURCES:.c=.o)
 TEST_SRC=$(wildcard tests/*.c)
@@ -12,8 +11,8 @@ all: build bin/loldrop tests
 release: CFLAGS=-g -Os -Wall -Isrc -DNDEBUG
 release: all
 
-bin/loldrop: $(OBJECTS) src/main.o
-	$(CC) $(CFLAGS) $(OBJECTS) src/main.o -o $@
+bin/loldrop: $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $@
 
 build:
 	@mkdir -p bin
@@ -27,7 +26,7 @@ tests: ${TESTS}
 	sh ./tests/runtests.sh
 
 $(TESTS): %: %.c
-	$(CC) $(CFLAGS) $(LIBS) $(OBJECTS) -o $@ $<
+	$(CC) $(CFLAGS) $(LIBS) $(filter-out src/main.o, $(OBJECTS)) -o $@ $<
 
 src/state_machine.o: ragel
 src/state_machine.c: src/state_machine.rl
