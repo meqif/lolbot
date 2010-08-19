@@ -1,4 +1,4 @@
-CFLAGS=-g -Wall -Isrc
+CFLAGS=-g -Wall -Isrc -DDEBUG
 
 SRCS=$(wildcard src/*.c)
 SOURCES=$(filter-out src/main.c, $(SRCS))
