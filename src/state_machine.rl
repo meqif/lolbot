@@ -72,6 +72,7 @@ struct irc_request *irc_parser(char *string)
         digits = calloc(s+1, sizeof(char));
         strncpy(digits, digit_start, s);
         irc_req->number = atoi(digits);
+        free(digits);
     } else
         irc_req->number = -1;
 
