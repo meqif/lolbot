@@ -2,6 +2,7 @@
 #include "network.h"
 #include "irc.h"
 #include "xdcc.h"
+#include "globals.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -17,17 +18,6 @@ char *shared_path, *ip;
 int nfiles;
 struct file_data *files;
 extern struct xdcc_request *request;
-
-static
-enum operation {
-    SEND,
-    INFO,
-    LIST,
-    REMOVE,
-    RESUME,
-    PING,
-    QUIT
-};
 
 %%{
     machine irc_parser;
@@ -79,7 +69,7 @@ int _xdcc_process(char *string, int len, int sockfd)
     char *p = string, *pe, *remote_nick, *nick_start, *command;
     char *digit_start = NULL, *digit_end = NULL, *digits;
     size_t nick_size, s;
-    enum operation op = 0;
+    enum irc_operation op = INVALID;
 
     nick_start = string+1;
 
@@ -102,7 +92,7 @@ int _xdcc_process(char *string, int len, int sockfd)
 
     switch(op) {
         case QUIT:
-            return -1;
+            return QUIT;
         case PING:
             irc_pong(sockfd, remote_nick);
             break;
@@ -120,8 +110,8 @@ int _xdcc_process(char *string, int len, int sockfd)
                 xdcc_send(&files[desired_file], remote_nick, sockfd);
             break;
         default:
-            irc_privmsg(sockfd, remote_nick, command);
-            break;
+            fprintf(stderr, "Unknown op received\n");
+            return INVALID;
     }
 
     return 0;

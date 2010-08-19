@@ -1,6 +1,7 @@
 #include "state_machine.h"
 #include "network.h"
 #include "irc.h"
+#include "globals.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -103,7 +104,7 @@ int main(int argc, char *argv[])
 #ifdef DEBUG
         printf("%s", buf);
 #endif
-        if (xdcc_process(buf, sockfd) == -1)
+        if (xdcc_process(buf, sockfd) == QUIT)
             break;
     }
 
