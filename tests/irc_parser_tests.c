@@ -3,6 +3,7 @@
 #include <state_machine.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <bstring.h>
 
 int tests_run = 0;
 int assertion = 0;
@@ -18,24 +19,25 @@ static
 char *test_xdcc_list()
 {
     struct irc_request *irc_req;
-    char *msg = calloc(1024, sizeof(char));
+    bstring msg;
 
-    sprintf(msg, "%s PRIVMSG loldrop: xdcc list\r\n", dummy);
-    irc_req = irc_parser(msg);
+    msg = bformat("%s PRIVMSG loldrop: xdcc list\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != LIST);
+    bdestroy(msg);
 
-    sprintf(msg, "%s PRIVMSG loldrop: xdcc list\r\n", dummy2);
-    irc_req = irc_parser(msg);
+    msg = bformat("%s PRIVMSG loldrop: xdcc list\r\n", dummy2);
+    irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != LIST);
+    bdestroy(msg);
 
-    sprintf(msg, "%s PRIVMSG loldrop: xdcc list\r\n", dummy3);
-    irc_req = irc_parser(msg);
+    msg = bformat("%s PRIVMSG loldrop: xdcc list\r\n", dummy3);
+    irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != LIST);
-
-    free(msg);
+    bdestroy(msg);
 
     return NULL;
 }
@@ -44,19 +46,19 @@ static
 char *test_xdcc_send()
 {
     struct irc_request *irc_req;
-    char *msg = calloc(1024, sizeof(char));
+    bstring msg;
 
-    sprintf(msg, "%s PRIVMSG loldrop: xdcc send #1\r\n", dummy);
-    irc_req = irc_parser(msg);
+    msg = bformat("%s PRIVMSG loldrop: xdcc send #1\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != SEND);
+    bdestroy(msg);
 
-    sprintf(msg, "%s PRIVMSG loldrop: xdcc send 1\r\n", dummy);
-    irc_req = irc_parser(msg);
+    msg = bformat("%s PRIVMSG loldrop: xdcc send 1\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != SEND);
-
-    free(msg);
+    bdestroy(msg);
 
     return NULL;
 }
