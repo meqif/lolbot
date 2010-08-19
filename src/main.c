@@ -87,15 +87,11 @@ int main(int argc, char *argv[])
     FILE *interwebs = fdopen(sockfd, "r+");
 
     err = irc_user(sockfd, nick, nick);
-    printf("%d\n", err);
-
     err = irc_nick(sockfd, nick);
-    printf("%d\n", err);
 
     sleep(1);
 
     err = irc_join(sockfd, channel);
-    printf("%d\n", err);
 
     buf = malloc(BUFSIZE * sizeof(char));
     while (1) {
@@ -109,7 +105,6 @@ int main(int argc, char *argv[])
     }
 
     err = irc_quit(sockfd);
-    printf("%d\n", err);
 
     fclose(interwebs);
     close(sockfd);
