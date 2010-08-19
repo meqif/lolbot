@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <unistd.h>
+#include <bstring.h>
 
 #define BUF_SIZE 1000
 
@@ -86,22 +87,21 @@ int init_server(char *path)
         for (idx = 0, i = 0; i < dir_size; i++) {
             char *name = list[i];
             if (strncmp(name, ".", 1) != 0) {  /* Don't list hidden files and directories */
-                char *buf = calloc(strlen(path) + strlen(name) + 2, sizeof(char));
-                sprintf(buf, "%s/%s", path, name);
+                bstring absolute_path = bformat("%s/%s", path, name);
 #ifdef DEBUG
-                fprintf(stderr, "%s\n", buf);
+                fprintf(stderr, "%s\n", bdata(absolute_path));
 #endif
-                char *start = calloc(strlen(buf)+100, sizeof(char));
                 s = malloc(sizeof(struct stat));
-                lstat(buf, s);
+                lstat(bdata(absolute_path), s);
                 unsigned long size = s->st_size; /* Using long for supporting files >=4GiB */
                 unsigned int sizeMB = size/(1024*1024);
-                sprintf(start, "#%d [%uMB] %s\n", idx+1, sizeMB, name);
+                bstring filedata = bformat("#%d [%uMB] %s\n", idx+1, sizeMB, name);
                 files[idx].filename = strdup(name);
-                files[idx].absolute_path = buf;
-                files[idx].filedata = strdup(start);
+                files[idx].absolute_path = bstr2cstr(absolute_path, '\0');
+                files[idx].filedata = bstr2cstr(filedata, '\0');
                 files[idx].info = s;
-                free(start);
+                bdestroy(absolute_path);
+                bdestroy(filedata);
                 idx++;
             }
             free(list[i]);
