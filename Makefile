@@ -20,6 +20,7 @@ build:
 
 clean:
 	rm -rf bin ${OBJECTS} ${TESTS}
+	rm -rf tests/m2.zcov tests/coverage
 	find . -name "*.gc*" -exec rm {} \;
 
 tests: ${TESTS}
@@ -46,7 +47,6 @@ valgrind:
 
 coverage: CFLAGS += -fprofile-arcs -ftest-coverage
 coverage: clean all
-	rm -rf tests/m2.zcov tests/coverage
 	zcov-scan tests/m2.zcov
 	zcov-genhtml tests/m2.zcov tests/coverage
 	zcov-summarize tests/m2.zcov
