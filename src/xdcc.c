@@ -1,7 +1,7 @@
 #include "xdcc.h"
 #include "network.h"
 #include "irc.h"
-#include "state_machine.h"
+#include "handler.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

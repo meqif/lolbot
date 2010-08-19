@@ -1,4 +1,5 @@
 #include "state_machine.h"
+#include "handler.h"
 #include "network.h"
 #include "irc.h"
 #include "globals.h"
@@ -77,7 +78,7 @@ int main(int argc, char *argv[])
     if (!shared_path || !server || !channel || !nick)
         usage();
 
-    if (init_processor(shared_path)) {
+    if (init_server(shared_path)) {
         fprintf(stderr, "Error initalizing data structures, bailing out.\n");
         return 1;
     }
