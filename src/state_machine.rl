@@ -39,7 +39,7 @@
 
 %% write data;
 
-struct irc_request *xdcc_process(char *string)
+struct irc_request *irc_parser(char *string)
 {
     int cs, len = strlen(string);
     char *p = string, *pe, *remote_nick, *nick_start, *command;

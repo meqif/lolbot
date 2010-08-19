@@ -3,6 +3,6 @@
 
 #include "globals.h"
 
-struct irc_request *xdcc_process(char *string);
+struct irc_request *irc_parser(char *string);
 
 #endif /* FSM_H */

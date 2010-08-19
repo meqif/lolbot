@@ -21,17 +21,17 @@ char *test_xdcc_list()
     char *msg = calloc(1024, sizeof(char));
 
     sprintf(msg, "%s PRIVMSG loldrop: xdcc list\r\n", dummy);
-    irc_req = xdcc_process(msg);
+    irc_req = irc_parser(msg);
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != LIST);
 
     sprintf(msg, "%s PRIVMSG loldrop: xdcc list\r\n", dummy2);
-    irc_req = xdcc_process(msg);
+    irc_req = irc_parser(msg);
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != LIST);
 
     sprintf(msg, "%s PRIVMSG loldrop: xdcc list\r\n", dummy3);
-    irc_req = xdcc_process(msg);
+    irc_req = irc_parser(msg);
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != LIST);
 
@@ -47,12 +47,12 @@ char *test_xdcc_send()
     char *msg = calloc(1024, sizeof(char));
 
     sprintf(msg, "%s PRIVMSG loldrop: xdcc send #1\r\n", dummy);
-    irc_req = xdcc_process(msg);
+    irc_req = irc_parser(msg);
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != SEND);
 
     sprintf(msg, "%s PRIVMSG loldrop: xdcc send 1\r\n", dummy);
-    irc_req = xdcc_process(msg);
+    irc_req = irc_parser(msg);
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != SEND);
 
