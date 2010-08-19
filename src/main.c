@@ -100,8 +100,11 @@ int main(int argc, char *argv[])
 #ifdef DEBUG
         printf("%s", buf);
 #endif
-        if (xdcc_process(buf, sockfd) == QUIT)
+        struct irc_request *irc_req = xdcc_process(buf);
+        if (irc_req->op == QUIT)
             break;
+
+        handler(sockfd, irc_req);
     }
 
     err = irc_quit(sockfd);

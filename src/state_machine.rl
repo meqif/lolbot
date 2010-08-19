@@ -62,14 +62,14 @@ int string_cmp(const void *a, const void *b)
     return strcmp(*ia, *ib);
 }
 
-static
-int _xdcc_process(char *string, int len, int sockfd)
+struct irc_request *xdcc_process(char *string)
 {
-    int cs, desired_file;
+    int cs, len = strlen(string);
     char *p = string, *pe, *remote_nick, *nick_start, *command;
     char *digit_start = NULL, *digit_end = NULL, *digits;
     size_t nick_size, s;
     enum irc_operation op = INVALID;
+    struct irc_request *irc_req = malloc(sizeof(struct irc_request));
 
     nick_start = string+1;
 
@@ -80,47 +80,53 @@ int _xdcc_process(char *string, int len, int sockfd)
     %% write exec;
 
     if ( cs < %%{ write first_final; }%% ) {
-        return 1;
+        irc_req->op = INVALID;
+        return irc_req;
     }
 
     remote_nick = calloc(nick_size+1, sizeof (char));
     strncpy(remote_nick, nick_start, nick_size);
+
+    irc_req->remote_nick = remote_nick;
+    irc_req->op = op;
+
+    if (digit_start && digit_end) {
+        s = digit_end - digit_start;
+        digits = calloc(s+1, sizeof(char));
+        strncpy(digits, digit_start, s);
+        irc_req->number = atoi(digits);
+    } else
+        irc_req->number = -1;
+
 #ifdef DEBUG
     printf("Remote nick: %s\n", remote_nick);
     printf("Command: %s\n", command);
 #endif
 
-    switch(op) {
+    return irc_req;
+}
+
+int handler(int sockfd, struct irc_request *irc_req)
+{
+    switch(irc_req->op) {
         case QUIT:
-            return QUIT;
+            /* Sir, you shouldn't be here. */
+            return 1;
         case PING:
-            irc_pong(sockfd, remote_nick);
+            irc_pong(sockfd, irc_req->remote_nick);
             break;
         case LIST:
-            xdcc_list(remote_nick, sockfd);
+            xdcc_list(irc_req->remote_nick, sockfd);
             break;
         case SEND:
-            if (digit_start && digit_end) {
-                s = digit_end - digit_start;
-                digits = calloc(s+1, sizeof(char));
-                strncpy(digits, digit_start, s);
-                desired_file = atoi(digits)-1;
-            }
-            if (desired_file >= 0)
-                xdcc_send(&files[desired_file], remote_nick, sockfd);
+            if (irc_req->number > 0)
+                xdcc_send(&files[irc_req->number-1], irc_req->remote_nick, sockfd);
             break;
         default:
-            fprintf(stderr, "Unknown op received\n");
-            return INVALID;
+            break;
     }
 
     return 0;
-}
-
-int xdcc_process(char *string, int sockfd)
-{
-    int len = strlen(string);
-    return _xdcc_process(string, len, sockfd);
 }
 
 int init_processor(char *path)

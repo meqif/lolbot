@@ -4,7 +4,7 @@
 #define globals_h
 
 enum irc_operation {
-	INVALID = -1,
+	INVALID,
     SEND,
     INFO,
     LIST,
@@ -12,6 +12,12 @@ enum irc_operation {
     RESUME,
     PING,
     QUIT
+};
+
+struct irc_request {
+	char *remote_nick;
+	enum irc_operation op;
+	int number;
 };
 
 #endif

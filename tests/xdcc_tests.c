@@ -1,5 +1,6 @@
 #include "minunit.h"
-#include <xdcc.h>
+#include <globals.h>
+#include <state_machine.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -9,16 +10,32 @@ const char *last_test = "";
 int line = 0;
 int strdup_fail = 0;
 
+static char *dummy  = ":nick!~user@127.0.0.1";
+static char *dummy2 = ":nick!~user@localhost.com";
+static char *dummy3 = ":nick!~user@127.0.0.1.localhost.com";
+
 static
 char *test_xdcc_list()
 {
-    char *response;
+    struct irc_request *irc_req;
+    char *msg = calloc(1024, sizeof(char));
 
-    response = xdcc_process("xdcc list");
-    mu_assert("xdcc list", response != NULL);
+    sprintf(msg, "%s PRIVMSG loldrop: xdcc list\r\n", dummy);
+    irc_req = xdcc_process(msg);
+    mu_assert("", irc_req != NULL);
+    mu_assert("", irc_req->op != LIST);
 
-    response = xdcc_process("xdcc list somefile.txt");
-    mu_assert("xdcc list somefile.txt", response == NULL);
+    sprintf(msg, "%s PRIVMSG loldrop: xdcc list\r\n", dummy2);
+    irc_req = xdcc_process(msg);
+    mu_assert("", irc_req != NULL);
+    mu_assert("", irc_req->op != LIST);
+
+    sprintf(msg, "%s PRIVMSG loldrop: xdcc list\r\n", dummy3);
+    irc_req = xdcc_process(msg);
+    mu_assert("", irc_req != NULL);
+    mu_assert("", irc_req->op != LIST);
+
+    free(msg);
 
     return NULL;
 }
@@ -26,41 +43,20 @@ char *test_xdcc_list()
 static
 char *test_xdcc_send()
 {
-    char *response;
+    struct irc_request *irc_req;
+    char *msg = calloc(1024, sizeof(char));
 
-    response = xdcc_process("xdcc send #1");
-    mu_assert("xdcc send #number", response != NULL);
+    sprintf(msg, "%s PRIVMSG loldrop: xdcc send #1\r\n", dummy);
+    irc_req = xdcc_process(msg);
+    mu_assert("", irc_req != NULL);
+    mu_assert("", irc_req->op != SEND);
 
-    response = xdcc_process("xdcc send");
-    mu_assert("xdcc send", response == NULL);
+    sprintf(msg, "%s PRIVMSG loldrop: xdcc send 1\r\n", dummy);
+    irc_req = xdcc_process(msg);
+    mu_assert("", irc_req != NULL);
+    mu_assert("", irc_req->op != SEND);
 
-    return NULL;
-}
-
-static
-char *test_xdcc_info()
-{
-    char *response;
-
-    response = xdcc_process("xdcc info #1");
-    mu_assert("xdcc info #number", response != NULL);
-
-    response = xdcc_process("xdcc info");
-    mu_assert("xdcc info", response == NULL);
-
-    return NULL;
-}
-
-static
-char *test_xdcc_remove()
-{
-    char *response;
-
-    response = xdcc_process("xdcc remove #1");
-    mu_assert("xdcc remove #number", response != NULL);
-
-    response = xdcc_process("xdcc remove");
-    mu_assert("xdcc remove", response != NULL);
+    free(msg);
 
     return NULL;
 }
@@ -69,8 +65,6 @@ static
 char *all_tests() {
     mu_run_test(test_xdcc_list);
     mu_run_test(test_xdcc_send);
-    mu_run_test(test_xdcc_info);
-    mu_run_test(test_xdcc_remove);
     return NULL;
 }
 
