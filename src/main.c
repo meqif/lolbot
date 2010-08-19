@@ -103,7 +103,8 @@ int main(int argc, char *argv[])
 #ifdef DEBUG
         printf("%s", buf);
 #endif
-        xdcc_process(buf, sockfd);
+        if (xdcc_process(buf, sockfd) == -1)
+            break;
     }
 
     err = irc_quit(sockfd);

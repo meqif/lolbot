@@ -25,11 +25,12 @@ enum operation {
     LIST,
     REMOVE,
     RESUME,
-    PING
+    PING,
+    QUIT
 };
 
 %%{
-    machine irc;
+    machine irc_parser;
 
     address = "~" (alnum|"@"|"-"|".")+;
     botname = "loldrop";
@@ -52,9 +53,11 @@ enum operation {
 
     xdcc = ("xdcc" >{ command = p; }) whitespace (single|multi);
     ping = ("PING" @{ op = PING; }) whitespace ":"? ((alnum|".")+ >{nick_start = p, nick_size = 0;} @{nick_size++;});
+    admin = "admin" whitespace "0x123456789" whitespace "quit" @{ op = QUIT; };
 
     main :=
             ( filler xdcc whitespace* ) |
+            ( filler admin whitespace*) |
             ping whitespace*;
 }%%
 
@@ -98,6 +101,8 @@ int _xdcc_process(char *string, int len, int sockfd)
 #endif
 
     switch(op) {
+        case QUIT:
+            return -1;
         case PING:
             irc_pong(sockfd, remote_nick);
             break;
