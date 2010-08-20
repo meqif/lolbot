@@ -81,6 +81,11 @@ char *get_external_ip()
     printf("Got external IP: %s\n", ip);
 #endif
 
+    if (strlen(ip) < 7) { /* e.g.: 1.1.1.1 */
+        free(ip);
+        ip = NULL;
+    }
+
     free(buf);
     fclose(interwebs);
     close(sockfd);

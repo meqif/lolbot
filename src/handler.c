@@ -57,6 +57,12 @@ int init_server(char *path)
     DIR *dir;
 
     ip = get_external_ip();
+
+    if (ip == NULL) {
+        fprintf(stderr, "Error getting IP address.\n");
+        return 1;
+    }
+
     shared_path = path;
 
     /* Initialize file list cache */
