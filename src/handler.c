@@ -40,7 +40,7 @@ int handler(int sockfd, irc_request *irc_req)
             xdcc_list(irc_req->remote_nick, sockfd);
             break;
         case SEND:
-            if (irc_req->number > 0 && irc_req->number < nfiles)
+            if (irc_req->number > 0 && irc_req->number <= nfiles)
                 xdcc_send(&files[irc_req->number-1], irc_req->remote_nick, sockfd);
             break;
         default:
