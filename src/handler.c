@@ -63,6 +63,10 @@ int init_server(char *path)
         return 1;
     }
 
+#ifdef DEBUG
+    printf("Got external IP: %s\n", ip);
+#endif
+
     shared_path = path;
 
     /* Initialize file list cache */
