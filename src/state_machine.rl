@@ -76,11 +76,6 @@ struct irc_request *irc_parser(char *string)
     } else
         irc_req->number = -1;
 
-#ifdef DEBUG
-    printf("Remote nick: %s\n", remote_nick);
-    printf("Command: %s\n", command);
-#endif
-
     return irc_req;
 }
 
