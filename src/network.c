@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <bstring.h>
 
 #define BUFSIZE 1024
 
@@ -61,7 +62,8 @@ int create_socket(char *hostname, char *port)
 
 char *get_external_ip()
 {
-    char *ip, *buf = malloc(BUFSIZE * sizeof(char));
+    char *ip;
+    bstring buf = NULL;
     int sockfd;
     FILE *interwebs;
 
@@ -70,19 +72,17 @@ char *get_external_ip()
 
     interwebs = fdopen(sockfd, "r");
     while(!feof(interwebs)) {
-        memset(buf, 0, BUFSIZE * sizeof(char));
-        fgets(buf, BUFSIZE, interwebs);
+        if (buf != NULL)
+            bdestroy(buf);
+        buf = bgets((bNgetc) fgetc, interwebs, '\n');
     }
 
-    ip = calloc(strlen(buf)+1, sizeof(char));
-    strcpy(ip, buf);
-
-    if (strlen(ip) < 7) { /* e.g.: 1.1.1.1 */
-        free(ip);
+    if (blength(buf) < 7) /* e.g.: 1.1.1.1 */
         ip = NULL;
-    }
+    else
+        ip = bstr2cstr(buf, '\0');
 
-    free(buf);
+    bdestroy(buf);
     fclose(interwebs);
     close(sockfd);
 
