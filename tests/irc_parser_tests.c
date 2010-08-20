@@ -83,6 +83,36 @@ char *test_xdcc_send()
 }
 
 static
+char *test_ping_pong()
+{
+    struct irc_request *irc_req;
+    bstring msg;
+
+    msg = bfromcstr("PING :remoteserver.net\r\n");
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("Valid PING", irc_req->op == PING);
+    bdestroy(msg);
+    free(irc_req);
+
+    msg = bfromcstr("PING remoteserver.net\r\n");
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("Valid PING", irc_req->op == PING);
+    bdestroy(msg);
+    free(irc_req);
+
+    msg = bfromcstr("PING invalid@address\r\n");
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("Invalid PING address", irc_req->op == INVALID);
+    bdestroy(msg);
+    free(irc_req);
+
+    return NULL;
+}
+
+static
 char *test_stupidity()
 {
     struct irc_request *irc_req;
@@ -102,6 +132,7 @@ static
 char *all_tests() {
     mu_run_test(test_xdcc_list);
     mu_run_test(test_xdcc_send);
+    mu_run_test(test_ping_pong);
     mu_run_test(test_stupidity);
     return NULL;
 }
