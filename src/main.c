@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <getopt.h>
+#include <bstring.h>
 
 #define BUFSIZE 128
 #define DEFAULT_PORT "6667"
@@ -38,7 +39,8 @@ int main(int argc, char *argv[])
 {
     int sockfd, err, ch;
     char *shared_path = NULL, *server = NULL, *port = DEFAULT_PORT,
-         *channel = NULL, *nick = NULL, *ptr, *buf;
+         *channel = NULL, *nick = NULL, *ptr;
+    bstring buf;
 
     while ((ch = getopt_long(argc, argv, "hspdcn", long_opts, NULL)) != -1) {
         ptr = optarg ? optarg : argv[optind];
@@ -94,14 +96,14 @@ int main(int argc, char *argv[])
 
     err = irc_join(sockfd, channel);
 
-    buf = malloc(BUFSIZE * sizeof(char));
     while (1) {
-        memset(buf, 0, BUFSIZE);
-        fgets(buf, BUFSIZE, interwebs);
+        buf = bgets((bNgetc) fgetc, interwebs, '\n');
 #ifdef DEBUG
-        printf("%s", buf);
+        printf("%s", bdata(buf));
 #endif
-        struct irc_request *irc_req = irc_parser(buf);
+        struct irc_request *irc_req = irc_parser(bdata(buf));
+        bdestroy(buf);
+
         if (irc_req->op == QUIT) {
             if (irc_req->remote_nick)
                 free(irc_req->remote_nick);
@@ -121,7 +123,6 @@ int main(int argc, char *argv[])
 
     fclose(interwebs);
     close(sockfd);
-    free(buf);
 
     return 0;
 }
