@@ -105,16 +105,12 @@ int main(int argc, char *argv[])
         bdestroy(buf);
 
         if (irc_req->op == QUIT) {
-            if (irc_req->remote_nick)
-                free(irc_req->remote_nick);
             free(irc_req);
             break;
         }
 
         handler(sockfd, irc_req);
 
-        if (irc_req->remote_nick)
-            free(irc_req->remote_nick);
         free(irc_req);
     }
 
