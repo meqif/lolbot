@@ -54,6 +54,7 @@ int irc_quit(int sockfd)
 
     message = bfromcstr("QUIT\r\n");
     err = SEND(sockfd, message);
+    bdestroy(message);
 
     return err;
 }

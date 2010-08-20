@@ -123,3 +123,35 @@ int init_server(char *path)
 
     return 0;
 }
+
+static
+void freeFileData(struct file_data *file)
+{
+    if (file == NULL)
+        return;
+
+    if (file->filename)
+        free(file->filename);
+
+    if (file->absolute_path)
+        free(file->absolute_path);
+
+    if (file->filedata)
+        free(file->filedata);
+
+    if (file->info)
+        free(file->info);
+}
+
+int tear_down_server()
+{
+    int i;
+
+    for (i = 0; i < nfiles; i++)
+        freeFileData(&files[i]);
+
+    free(files);
+    free(ip);
+
+    return 0;
+}

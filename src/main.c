@@ -102,15 +102,22 @@ int main(int argc, char *argv[])
         printf("%s", buf);
 #endif
         struct irc_request *irc_req = irc_parser(buf);
-        if (irc_req->op == QUIT)
+        if (irc_req->op == QUIT) {
+            if (irc_req->remote_nick)
+                free(irc_req->remote_nick);
+            free(irc_req);
             break;
+        }
 
         handler(sockfd, irc_req);
 
+        if (irc_req->remote_nick)
+            free(irc_req->remote_nick);
         free(irc_req);
     }
 
     err = irc_quit(sockfd);
+    tear_down_server();
 
     fclose(interwebs);
     close(sockfd);
