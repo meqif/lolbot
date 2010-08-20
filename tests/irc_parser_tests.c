@@ -26,18 +26,21 @@ char *test_xdcc_list()
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != LIST);
     bdestroy(msg);
+    free(irc_req);
 
     msg = bformat("%s PRIVMSG loldrop: xdcc list\r\n", dummy2);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != LIST);
     bdestroy(msg);
+    free(irc_req);
 
     msg = bformat("%s PRIVMSG loldrop: xdcc list\r\n", dummy3);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != LIST);
     bdestroy(msg);
+    free(irc_req);
 
     return NULL;
 }
@@ -53,12 +56,14 @@ char *test_xdcc_send()
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != SEND);
     bdestroy(msg);
+    free(irc_req);
 
     msg = bformat("%s PRIVMSG loldrop: xdcc send 1\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op != SEND);
     bdestroy(msg);
+    free(irc_req);
 
     return NULL;
 }

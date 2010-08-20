@@ -106,6 +106,8 @@ int main(int argc, char *argv[])
             break;
 
         handler(sockfd, irc_req);
+
+        free(irc_req);
     }
 
     err = irc_quit(sockfd);
