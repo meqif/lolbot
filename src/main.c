@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 #ifdef DEBUG
         printf("%s", bdata(buf));
 #endif
-        struct irc_request *irc_req = irc_parser(bdata(buf));
+        irc_request *irc_req = irc_parser(bdata(buf));
         bdestroy(buf);
 
         if (irc_req->op == QUIT) {

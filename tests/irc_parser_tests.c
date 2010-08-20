@@ -18,7 +18,7 @@ static char *dummy3 = ":nick!~user@127.0.0.1.localhost.com";
 static
 char *test_xdcc_list()
 {
-    struct irc_request *irc_req;
+    irc_request *irc_req;
     bstring msg;
 
     msg = bformat("%s PRIVMSG loldrop :xdcc list\r\n", dummy);
@@ -62,7 +62,7 @@ char *test_xdcc_list()
 static
 char *test_xdcc_send()
 {
-    struct irc_request *irc_req;
+    irc_request *irc_req;
     bstring msg;
 
     msg = bformat("%s PRIVMSG loldrop :xdcc send #1\r\n", dummy);
@@ -101,7 +101,7 @@ char *test_xdcc_send()
 static
 char *test_xdcc_info()
 {
-    struct irc_request *irc_req;
+    irc_request *irc_req;
     bstring msg;
 
     msg = bformat("%s PRIVMSG loldrop :xdcc info #1\r\n", dummy);
@@ -140,7 +140,7 @@ char *test_xdcc_info()
 static
 char *test_xdcc_remove()
 {
-    struct irc_request *irc_req;
+    irc_request *irc_req;
     bstring msg;
 
     msg = bformat("%s PRIVMSG loldrop :xdcc remove #1\r\n", dummy);
@@ -187,7 +187,7 @@ char *test_xdcc_remove()
 static
 char *test_ping_pong()
 {
-    struct irc_request *irc_req;
+    irc_request *irc_req;
     bstring msg;
 
     msg = bfromcstr("PING :remoteserver.net\r\n");
@@ -217,7 +217,7 @@ char *test_ping_pong()
 static
 char *test_stupidity()
 {
-    struct irc_request *irc_req;
+    irc_request *irc_req;
     bstring msg;
 
     msg = bfromcstr("omgwtfbbq\r\n");
@@ -247,7 +247,7 @@ char *test_stupidity()
 static
 char *test_admin()
 {
-    struct irc_request *irc_req;
+    irc_request *irc_req;
     bstring msg;
 
     msg = bformat("%s PRIVMSG loldrop :admin 0x123456789 quit\r\n", dummy);

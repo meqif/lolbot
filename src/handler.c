@@ -27,7 +27,7 @@ int string_cmp(const void *a, const void *b)
     return strcmp(*ia, *ib);
 }
 
-int handler(int sockfd, struct irc_request *irc_req)
+int handler(int sockfd, irc_request *irc_req)
 {
     switch(irc_req->op) {
         case QUIT:

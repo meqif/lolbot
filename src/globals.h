@@ -14,10 +14,10 @@ enum irc_operation {
     QUIT
 };
 
-struct irc_request {
+typedef struct {
 	char *remote_nick;
 	enum irc_operation op;
 	int number;
-};
+} irc_request;
 
 #endif

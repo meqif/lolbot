@@ -12,7 +12,7 @@ struct file_data {
     struct stat *info;
 };
 
-int handler(int sockfd, struct irc_request *irc_req);
+int handler(int sockfd, irc_request *irc_req);
 int init_server(char *path);
 int tear_down_server();
 
