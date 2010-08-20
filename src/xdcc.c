@@ -115,7 +115,7 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
 
     FILE *file = fopen(request->file->absolute_path, "r");
     unsigned char *buffer = malloc(FILE_BUFSIZE);
-    char ack[4];
+    unsigned int ack = 0;
 
     printf("Offset: %lu\n", request->offset);
 
@@ -132,7 +132,7 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
             break;
 
         // Receive 4-byte ACK
-        if (recv(sock, ack, 4*sizeof(char), 0) == -1)
+        if (recv(sock, &ack, 4, 0) == -1)
             break;
     }
 
