@@ -12,7 +12,7 @@
 #include <arpa/inet.h>
 
 #define BUF_SIZE 1000
-#define FILE_BUFSIZE 10240
+#define FILE_BUFSIZE 1024*10
 
 extern char *ip;
 extern int nfiles;
@@ -128,14 +128,16 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
 
         // Send block
         int len = fread(buffer, sizeof(char), FILE_BUFSIZE, file);
-        if (send(sock, buffer, len, 0) < 1)
+        if (send(sock, buffer, len, 0) == -1)
             break;
 
         // Receive 4-byte ACK
-        if (recv(sock, ack, 4*sizeof(char), 0) < 1)
+        if (recv(sock, ack, 4*sizeof(char), 0) == -1)
             break;
     }
 
+    free(buffer);
+    fclose(file);
     close(sock);
     close(newsock);
 
