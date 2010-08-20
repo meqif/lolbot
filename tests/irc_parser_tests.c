@@ -69,6 +69,7 @@ char *test_xdcc_send()
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == SEND);
+    mu_assert("", irc_req->number == 1);
     bdestroy(msg);
     free(irc_req);
 
@@ -76,6 +77,65 @@ char *test_xdcc_send()
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == SEND);
+    mu_assert("", irc_req->number == 1);
+    bdestroy(msg);
+    free(irc_req);
+
+    return NULL;
+}
+
+static
+char *test_xdcc_info()
+{
+    struct irc_request *irc_req;
+    bstring msg;
+
+    msg = bformat("%s PRIVMSG loldrop :xdcc info #1\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("", irc_req->op == INFO);
+    mu_assert("", irc_req->number == 1);
+    bdestroy(msg);
+    free(irc_req);
+
+    msg = bformat("%s PRIVMSG loldrop :xdcc info 1\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("", irc_req->op == INFO);
+    mu_assert("", irc_req->number == 1);
+    bdestroy(msg);
+    free(irc_req);
+
+    return NULL;
+}
+
+static
+char *test_xdcc_remove()
+{
+    struct irc_request *irc_req;
+    bstring msg;
+
+    msg = bformat("%s PRIVMSG loldrop :xdcc remove #1\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("", irc_req->op == REMOVE);
+    mu_assert("", irc_req->number == 1);
+    bdestroy(msg);
+    free(irc_req);
+
+    msg = bformat("%s PRIVMSG loldrop :xdcc remove 1\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("", irc_req->op == REMOVE);
+    mu_assert("", irc_req->number == 1);
+    bdestroy(msg);
+    free(irc_req);
+
+    msg = bformat("%s PRIVMSG loldrop :xdcc remove\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("", irc_req->op == REMOVE);
+    mu_assert("", irc_req->number == -1);
     bdestroy(msg);
     free(irc_req);
 
@@ -129,11 +189,37 @@ char *test_stupidity()
 }
 
 static
+char *test_admin()
+{
+    struct irc_request *irc_req;
+    bstring msg;
+
+    msg = bformat("%s PRIVMSG loldrop :admin 0x123456789 quit\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("Valid quit admin command", irc_req->op == QUIT);
+    bdestroy(msg);
+    free(irc_req);
+
+    msg = bformat("%s PRIVMSG loldrop :xdcc admin 0x123456789 quit\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("Stupid, invalid xdcc and admin mixup", irc_req->op != QUIT);
+    bdestroy(msg);
+    free(irc_req);
+
+    return NULL;
+}
+
+static
 char *all_tests() {
     mu_run_test(test_xdcc_list);
     mu_run_test(test_xdcc_send);
+    mu_run_test(test_xdcc_info);
+    mu_run_test(test_xdcc_remove);
     mu_run_test(test_ping_pong);
     mu_run_test(test_stupidity);
+    mu_run_test(test_admin);
     return NULL;
 }
 
