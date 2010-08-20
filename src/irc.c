@@ -90,8 +90,8 @@ int irc_dcc_send(int sockfd, char *remote_nick, char *filename,
     char *command = "DCC SEND";
     bstring message;
 
-    message = bformat("%c%s %s %u %d %lu%c", '\1',
-            command, filename, address, port, filesize, '\1');
+    message = bformat("\01%s %s %u %d %lu\01",
+            command, filename, address, port, filesize);
     err = irc_privmsg(sockfd, remote_nick, bdata(message));
     bdestroy(message);
 
