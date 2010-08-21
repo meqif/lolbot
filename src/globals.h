@@ -3,6 +3,10 @@
 #ifndef globals_h
 #define globals_h
 
+#ifndef MSG_NOSIGNAL
+#define MSG_NOSIGNAL 0
+#endif
+
 enum irc_operation {
 	INVALID,
     SEND,

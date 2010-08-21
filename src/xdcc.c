@@ -95,7 +95,7 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
 
     char *buf = calloc(1024, sizeof(char));
     printf("Peek");
-    recv(sockfd, buf, 1024, MSG_PEEK);
+    recv(sockfd, buf, 1024, MSG_PEEK|MSG_NOSIGNAL);
     printf("aboo\n");
     printf("%s\n", buf);
 
@@ -116,6 +116,11 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
     socklen_t addr_size;
     int sock = accept(newsock, their_addr, &addr_size);
 
+#ifdef SO_NOSIGPIPE
+    int set = 1;
+    setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+#endif
+
     FILE *file = fopen(request->file->absolute_path, "r");
     unsigned char *buffer = malloc(FILE_BUFSIZE);
     unsigned int ack = 0;
@@ -131,11 +136,11 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
 
         // Send block
         int len = fread(buffer, sizeof(char), FILE_BUFSIZE, file);
-        if (send(sock, buffer, len, 0) == -1)
+        if (send(sock, buffer, len, MSG_NOSIGNAL) == -1)
             break;
 
         // Receive 4-byte ACK
-        if (recv(sock, &ack, 4, 0) == -1)
+        if (recv(sock, &ack, 4, MSG_NOSIGNAL) == -1)
             break;
     }
 
