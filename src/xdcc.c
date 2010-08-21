@@ -83,9 +83,14 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
     unsigned long filesize = fsize(request->file->absolute_path);
     irc_dcc_send(sockfd, request->nick, request->file->filename, filesize, addr, porti);
 
-    struct timeval tv;
-    tv.tv_sec = 3;
+    struct timeval tv, tv_original;
+    socklen_t tv_length = sizeof(struct timeval);
+    tv.tv_sec = 5;
     tv.tv_usec = 0;
+
+    // Save socket timeout settings
+    getsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv_original, &tv_length);
+
     setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
 
     char *buf = calloc(1024, sizeof(char));
@@ -98,6 +103,9 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
         request->offset = atoi(strrchr(buf, ' '));
         irc_dcc_accept(sockfd, request->nick, request->file->filename, porti, request->offset);
     }
+
+    // Restore original timeout settings
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv_original, sizeof(struct timeval));
 
     free(buf);
 
