@@ -94,14 +94,15 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
     setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
 
     char *buf = calloc(1024, sizeof(char));
-    printf("Peek");
-    recv(sockfd, buf, 1024, MSG_PEEK|MSG_NOSIGNAL);
-    printf("aboo\n");
-    printf("%s\n", buf);
+    int err = recv(sockfd, buf, 1024, MSG_PEEK|MSG_NOSIGNAL);
 
-    if (strlen(buf) > 0 && strstr(buf, "RESUME")) {
-        request->offset = atoi(strrchr(buf, ' '));
-        irc_dcc_accept(sockfd, request->nick, request->file->filename, porti, request->offset);
+    if (err == ETIMEDOUT)
+        fprintf(stderr, "Resume request timed out, proceeding...\n");
+    else {
+        if (strlen(buf) > 0 && strstr(buf, "RESUME")) {
+            request->offset = atoi(strrchr(buf, ' '));
+            irc_dcc_accept(sockfd, request->nick, request->file->filename, porti, request->offset);
+        }
     }
 
     // Restore original timeout settings
@@ -109,7 +110,9 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
 
     free(buf);
 
+#ifndef NDEBUG
     printf("Offset: %lu\n", request->offset);
+#endif
 
     // Send/Resume file
     struct sockaddr *their_addr = calloc(1, sizeof(struct sockaddr));
@@ -125,7 +128,9 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
     unsigned char *buffer = malloc(FILE_BUFSIZE);
     unsigned int ack = 0;
 
+#ifndef NDEBUG
     printf("Offset: %lu\n", request->offset);
+#endif
 
     if (request->offset > 0)
         if (fseek(file, request->offset, SEEK_SET))
