@@ -233,11 +233,17 @@ char *test_stupidity()
     irc_request *irc_req;
     bstring msg;
 
-    msg = bfromcstr("omgwtfbbq\r\n");
-    irc_req = irc_parser(bdata(msg));
+    irc_req = irc_parser(NULL);
+    mu_assert("NULL message", irc_req == NULL);
+
+    irc_req = irc_parser("");
+    mu_assert("", irc_req != NULL);
+    mu_assert("Empty message", irc_req->op == INVALID);
+    free(irc_req);
+
+    irc_req = irc_parser("omgwtfbbq\r\n");
     mu_assert("", irc_req != NULL);
     mu_assert("Absurd message", irc_req->op == INVALID);
-    bdestroy(msg);
     free(irc_req);
 
     msg = bformat("%s PRIVMSG loldrop :xdcc invalid #1337\r\n", dummy);

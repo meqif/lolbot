@@ -41,6 +41,9 @@
 
 irc_request *irc_parser(char *string)
 {
+    if (string == NULL)
+        return NULL;
+
     int cs, len = strlen(string);
     char *p = string, *pe, *remote_nick, *nick_start, *command;
     char *digit_start = NULL, *digit_end = NULL, *digits;

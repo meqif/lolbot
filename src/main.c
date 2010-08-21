@@ -104,6 +104,9 @@ int main(int argc, char *argv[])
         irc_request *irc_req = irc_parser(bdata(buf));
         bdestroy(buf);
 
+        if (irc_req == NULL)
+            continue;
+
         if (irc_req->op == QUIT) {
             free(irc_req);
             break;
