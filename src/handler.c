@@ -63,7 +63,7 @@ int init_server(char *path)
         return 1;
     }
 
-#ifdef DEBUG
+#ifndef NDEBUG
     printf("Got external IP: %s\n", ip);
 #endif
 
@@ -98,7 +98,7 @@ int init_server(char *path)
             char *name = list[i];
             if (strncmp(name, ".", 1) != 0) {  /* Don't list hidden files and directories */
                 bstring absolute_path = bformat("%s/%s", path, name);
-#ifdef DEBUG
+#ifndef NDEBUG
                 fprintf(stderr, "%s\n", bdata(absolute_path));
 #endif
                 s = malloc(sizeof(struct stat));

@@ -1,4 +1,4 @@
-CFLAGS=-g -Wall -Wshadow -Isrc -DDEBUG
+CFLAGS=-g -Wall -Wshadow -Isrc
 
 SOURCES=$(wildcard src/*.c src/**/*.c)
 #OBJECTS=$(patsubst %.c,%.o,${SOURCES})

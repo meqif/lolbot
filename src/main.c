@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 
     while (1) {
         buf = bgets((bNgetc) fgetc, interwebs, '\n');
-#ifdef DEBUG
+#ifndef NDEBUG
         printf("%s", bdata(buf));
 #endif
         irc_request *irc_req = irc_parser(bdata(buf));
