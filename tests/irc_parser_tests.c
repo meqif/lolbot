@@ -25,6 +25,7 @@ char *test_xdcc_list()
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Invalid address format", irc_req->op == LIST);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -32,6 +33,7 @@ char *test_xdcc_list()
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Invalid address format", irc_req->op == LIST);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -39,6 +41,7 @@ char *test_xdcc_list()
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Invalid address format", irc_req->op == LIST);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -46,6 +49,7 @@ char *test_xdcc_list()
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Many spaces after colon", irc_req->op == LIST);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -70,6 +74,7 @@ char *test_xdcc_send()
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == SEND);
     mu_assert("", irc_req->number == 1);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -78,6 +83,7 @@ char *test_xdcc_send()
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == SEND);
     mu_assert("", irc_req->number == 1);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -109,6 +115,7 @@ char *test_xdcc_info()
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == INFO);
     mu_assert("", irc_req->number == 1);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -117,6 +124,7 @@ char *test_xdcc_info()
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == INFO);
     mu_assert("", irc_req->number == 1);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -148,6 +156,7 @@ char *test_xdcc_remove()
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == REMOVE);
     mu_assert("", irc_req->number == 1);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -156,6 +165,7 @@ char *test_xdcc_remove()
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == REMOVE);
     mu_assert("", irc_req->number == 1);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -164,6 +174,7 @@ char *test_xdcc_remove()
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == REMOVE);
     mu_assert("", irc_req->number == -1);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -194,6 +205,7 @@ char *test_ping_pong()
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Valid PING", irc_req->op == PING);
+    mu_assert("", strcmp("remoteserver.net", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -201,6 +213,7 @@ char *test_ping_pong()
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Valid PING", irc_req->op == PING);
+    mu_assert("", strcmp("remoteserver.net", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
@@ -254,13 +267,14 @@ char *test_admin()
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Valid quit admin command", irc_req->op == QUIT);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
 
     msg = bformat("%s PRIVMSG loldrop :xdcc admin 0x123456789 quit\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
-    mu_assert("Stupid, invalid xdcc and admin mixup", irc_req->op != QUIT);
+    mu_assert("Stupid, invalid xdcc and admin mixup", irc_req->op == INVALID);
     bdestroy(msg);
     free(irc_req);
 
