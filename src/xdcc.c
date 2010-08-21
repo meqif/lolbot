@@ -89,7 +89,7 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
     irc_dcc_send(sockfd, request->nick, request->file->filename, filesize, addr, porti);
 
     struct timeval tv;
-    tv.tv_sec = 5;
+    tv.tv_sec = 3;
     tv.tv_usec = 0;
     setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv, sizeof(struct timeval));
 
@@ -109,9 +109,9 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
     printf("Offset: %lu\n", request->offset);
 
     // Send/Resume file
-    struct sockaddr their_addr;
+    struct sockaddr *their_addr = calloc(1, sizeof(struct sockaddr));
     socklen_t addr_size;
-    int sock = accept(newsock, &their_addr, &addr_size);
+    int sock = accept(newsock, their_addr, &addr_size);
 
     FILE *file = fopen(request->file->absolute_path, "r");
     unsigned char *buffer = malloc(FILE_BUFSIZE);
@@ -136,6 +136,7 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
             break;
     }
 
+    free(their_addr);
     free(buffer);
     fclose(file);
     close(sock);
