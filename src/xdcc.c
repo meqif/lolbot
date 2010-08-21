@@ -12,7 +12,7 @@
 #include <arpa/inet.h>
 
 #define BUF_SIZE 1000
-#define FILE_BUFSIZE 1024*10
+#define FILE_BUFSIZE 1024*1
 
 extern char *ip;
 extern int nfiles;
@@ -20,6 +20,7 @@ extern struct file_data *files;
 struct xdcc_request *request;
 
 /* Converts an IPv4 address given in a string to the corresponding integer */
+static
 int foo(char *str)
 {
     union {
@@ -60,12 +61,6 @@ int xdcc_list(char *remote_nick, int sockfd)
     }
 
     return 0;
-}
-
-static
-char *xdcc_info(char *string)
-{
-    return NULL;
 }
 
 int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
@@ -145,9 +140,3 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
     return 0;
 }
 
-static
-void xdcc_remove(int position)
-{
-    if (position == -1)
-        return;
-}
