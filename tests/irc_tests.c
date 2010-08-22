@@ -5,6 +5,7 @@
 #include <bstring.h>
 
 #define PORT "6667"
+#define SOCK 0
 
 int tests_run = 0;
 int assertion = 0;
@@ -26,7 +27,7 @@ char *test_irc_user() {
     bstring expected;
 
     expected = bfromcstr("USER loldrop x x :loldrop\r\n");
-    irc_user(0, "loldrop", "loldrop");
+    irc_user(SOCK, "loldrop", "loldrop");
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
@@ -40,7 +41,7 @@ char *test_irc_nick() {
     bstring expected;
 
     expected = bfromcstr("NICK loldrop\r\n");
-    irc_nick(0, "loldrop");
+    irc_nick(SOCK, "loldrop");
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
@@ -54,7 +55,7 @@ char *test_irc_join() {
     bstring expected;
 
     expected = bfromcstr("JOIN #loldrop\r\n");
-    irc_join(0, "loldrop");
+    irc_join(SOCK, "loldrop");
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
@@ -82,7 +83,7 @@ char *test_irc_pong() {
     bstring expected;
 
     expected = bfromcstr("PONG server.somewhere.net\r\n");
-    irc_pong(0, "server.somewhere.net");
+    irc_pong(SOCK, "server.somewhere.net");
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
@@ -96,7 +97,7 @@ char *test_irc_privmsg() {
     bstring expected;
 
     expected = bfromcstr("PRIVMSG someBloke :Message for someBloke!\r\n");
-    irc_privmsg(0, "someBloke", "Message for someBloke!");
+    irc_privmsg(SOCK, "someBloke", "Message for someBloke!");
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
@@ -110,7 +111,7 @@ char *test_irc_notice() {
     bstring expected;
 
     expected = bfromcstr("NOTICE someBloke :Message for someBloke!\r\n");
-    irc_notice(0, "someBloke", "Message for someBloke!");
+    irc_notice(SOCK, "someBloke", "Message for someBloke!");
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
@@ -124,7 +125,7 @@ char *test_irc_dcc_send() {
     bstring expected;
 
     expected = bfromcstr("PRIVMSG someBloke :\01DCC SEND somefile.ext 92929292 8888 123456789\01\r\n");
-    irc_dcc_send(0, "someBloke", "somefile.ext", 123456789, 92929292, 8888);
+    irc_dcc_send(SOCK, "someBloke", "somefile.ext", 123456789, 92929292, 8888);
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
@@ -138,7 +139,7 @@ char *test_irc_dcc_accept() {
     bstring expected;
 
     expected = bfromcstr("PRIVMSG someBloke :\01DCC ACCEPT somefile.ext 8888 123456789\01\r\n");
-    irc_dcc_accept(0, "someBloke", "somefile.ext", 8888, 123456789);
+    irc_dcc_accept(SOCK, "someBloke", "somefile.ext", 8888, 123456789);
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
