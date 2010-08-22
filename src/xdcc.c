@@ -148,7 +148,7 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
         nsent += len;
 
         // Receive 4-byte ACK
-        int err = 0;
+        err = 0;
         while (ntohl(ack) < nsent) {
             if ((err = recv(sock, &ack, 4, MSG_NOSIGNAL)) == -1) {
                 break;
