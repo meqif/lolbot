@@ -8,7 +8,7 @@
 struct file_data {
     char *filename;
     char *absolute_path;
-    char *filedata;
+    char *desc;
     struct stat *info;
 };
 

@@ -105,13 +105,13 @@ int init_server(char *path)
                 lstat(bdata(absolute_path), s);
                 unsigned long size = s->st_size; /* Using long for supporting files >=4GiB */
                 unsigned int sizeMB = size/(1024*1024);
-                bstring filedata = bformat("#%d [%uMB] %s\n", idx+1, sizeMB, name);
+                bstring desc = bformat("#%d [%uMB] %s\n", idx+1, sizeMB, name);
                 files[idx].filename = strdup(name);
                 files[idx].absolute_path = bstr2cstr(absolute_path, '\0');
-                files[idx].filedata = bstr2cstr(filedata, '\0');
+                files[idx].desc = bstr2cstr(desc, '\0');
                 files[idx].info = s;
                 bdestroy(absolute_path);
-                bdestroy(filedata);
+                bdestroy(desc);
                 idx++;
             }
             free(list[i]);
@@ -140,8 +140,8 @@ void freeFileData(struct file_data *file)
     if (file->absolute_path)
         free(file->absolute_path);
 
-    if (file->filedata)
-        free(file->filedata);
+    if (file->desc)
+        free(file->desc);
 
     if (file->info)
         free(file->info);

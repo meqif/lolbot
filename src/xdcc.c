@@ -57,7 +57,7 @@ int xdcc_list(char *remote_nick, int sockfd)
 {
     int i;
     for (i = 0; i < nfiles; i++) {
-        irc_notice(sockfd, remote_nick, files[i].filedata);
+        irc_notice(sockfd, remote_nick, files[i].desc);
     }
 
     return 0;
