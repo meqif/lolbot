@@ -9,7 +9,7 @@ struct file_data {
     char *filename;
     char *absolute_path;
     char *desc;
-    struct stat *info;
+    unsigned long size;
 };
 
 int handler(int sockfd, irc_request *irc_req);

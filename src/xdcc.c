@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include <errno.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -45,14 +44,6 @@ int foo(char *str)
     return gamma.x;
 }
 
-static
-off_t fsize(char *filename)
-{
-    struct stat *buf = malloc(sizeof (struct stat));
-    stat(filename, buf);
-    return buf->st_size;
-}
-
 int xdcc_list(char *remote_nick, int sockfd)
 {
     int i;
@@ -80,8 +71,7 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
     request->offset = 0;
     request->nick = remote_nick;
 
-    unsigned long filesize = fsize(request->file->absolute_path);
-    irc_dcc_send(sockfd, request->nick, request->file->filename, filesize, addr, porti);
+    irc_dcc_send(sockfd, request->nick, request->file->filename, request->file->size, addr, porti);
 
     struct timeval tv, tv_original;
     socklen_t tv_length = sizeof(struct timeval);

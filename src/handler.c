@@ -103,15 +103,15 @@ int init_server(char *path)
 #endif
                 s = malloc(sizeof(struct stat));
                 lstat(bdata(absolute_path), s);
-                unsigned long size = s->st_size; /* Using long for supporting files >=4GiB */
-                unsigned int sizeMB = size/(1024*1024);
+                files[idx].size = s->st_size;
+                unsigned int sizeMB = (s->st_size)/(1024*1024);
                 bstring desc = bformat("#%d [%uMB] %s\n", idx+1, sizeMB, name);
                 files[idx].filename = strdup(name);
                 files[idx].absolute_path = bstr2cstr(absolute_path, '\0');
                 files[idx].desc = bstr2cstr(desc, '\0');
-                files[idx].info = s;
                 bdestroy(absolute_path);
                 bdestroy(desc);
+                free(s);
                 idx++;
             }
             free(list[i]);
@@ -142,9 +142,6 @@ void freeFileData(struct file_data *file)
 
     if (file->desc)
         free(file->desc);
-
-    if (file->info)
-        free(file->info);
 }
 
 int tear_down_server()
