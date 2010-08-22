@@ -4,8 +4,6 @@
 #include <sys/socket.h>
 #include <bstring.h>
 
-#define MAX_FILE_SIZE 20 /* (2**64).to_s.length */
-
 int irc_user(int sockfd, char *nick, char *real_name)
 {
     int err;
