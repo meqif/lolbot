@@ -1,0 +1,82 @@
+= lolbot
+
+lolbot is an implementation of an IRC bot, for the purpose of
+file serving and distribution via the DCC protocol.
+
+== Usage
+
+usage: lolbot [options]
+  -h  --help	print this usage and exit
+  -s  --server	irc server to connect
+  -p  --port	irc server's port (optional, defaults to 6667)
+  -d  --path	path to shared directory
+  -c  --channel	channel to join
+  -n  --nick	nickname to be used
+
+For instance
+
+    lolbot -s irc.rizon.net -n mybot -c somechannel -d ~/shared_stuff
+
+== Known issues
+
+* Currently, the bot deals with only one connection at a time. It runs in a
+  single thread, in a single process.
+* The bot's name as well as the admin password are hard coded.
+* There's no clean way to shut down the bot other than issuing a "admin
+  <password> quit" command through a private message.
+
+== Reporting issues/bugs
+
+lolbot uses GitHub Issues for tracking issues/bugs:
+
+  http://github.com/meqif/lolbot/issues
+
+== Contributing
+
+The source code is on GitHub:
+
+  http://github.com/meqif/lolbot
+
+To get a copy:
+
+  git clone git://github.com/meqif/lolbot.git
+
+There is an optional requirement:
+
+* Ragel 6.5+ for building the ragel parser. The generated C file is
+  included in the git repository, so people can build the bot with
+  just make and a compiler.
+  You'll need Ragel only if you want to modify the parser.
+
+== Building
+
+To build the bot from a git checkout, after installing the
+requirements:
+
+  make release
+
+== Platforms Supported
+
+loldrop has been tested on the following:
+
+=== Operating Systems/Platforms
+
+* Linux (x86_64)
+* Mac OS X 10.6 (x86_64, i386)
+
+=== Compiler Versions
+
+* gcc (4.2.1, 4.5.0)
+* clang (1.1)
+
+== Todo
+
+* Add more unit tests for greater code coverage
+* Add transfer queues
+* Add some sort of multiplex support
+* Add support for xdcc queue, a nifty command that allows queuing a range
+  (#1-#5) or a list (#1,#3,#5) of packs for download
+
+== Author
+
+Ricardo Martins <code@ricardomartins.cc>
