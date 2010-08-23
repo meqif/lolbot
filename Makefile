@@ -28,7 +28,6 @@ tests: ${TESTS}
 $(TESTS): %: %.c
 	$(CC) $(CFLAGS) $(LIBS) $(filter-out src/main.o, $(OBJECTS)) -o $@ $<
 
-src/state_machine.o: ragel
 src/state_machine.c: src/state_machine.rl
 
 check:
