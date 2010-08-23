@@ -21,7 +21,7 @@ For instance
 
 * Currently, the bot deals with only one connection at a time. It runs in a
   single thread, in a single process.
-* The bot's name as well as the admin password are hard coded.
+* The admin password is hard coded.
 * There's no clean way to shut down the bot other than issuing a "admin
   <password> quit" command through a private message.
 

@@ -17,6 +17,7 @@
 char *shared_path, *ip;
 int nfiles;
 struct file_data *files;
+bstring bot_nickname;
 
 /* String comparison for quicksort */
 static
@@ -50,12 +51,14 @@ int handler(int sockfd, irc_request *irc_req)
     return 0;
 }
 
-int init_server(char *path)
+int init_server(char *nick, char *path)
 {
     struct dirent *d;
     struct stat *s;
     DIR *dir;
 
+    shared_path = path;
+    bot_nickname = bfromcstr(nick);
     ip = get_external_ip();
 
     if (ip == NULL) {
@@ -66,8 +69,6 @@ int init_server(char *path)
 #ifndef NDEBUG
     printf("Got external IP: %s\n", ip);
 #endif
-
-    shared_path = path;
 
     /* Initialize file list cache */
     dir = opendir(path);
@@ -153,6 +154,7 @@ int tear_down_server()
 
     free(files);
     free(ip);
+    bdestroy(bot_nickname);
 
     return 0;
 }

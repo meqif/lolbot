@@ -9,7 +9,7 @@ int tests_run = 0;
 int assertion = 0;
 const char *last_test = "";
 int line = 0;
-
+extern bstring bot_nickname;
 static char *dummy  = ":nick!~user@127.0.0.1";
 static char *dummy2 = ":nick!~user@localhost.com";
 static char *dummy3 = ":nick!~user@127.0.0.1.localhost.com";
@@ -27,6 +27,26 @@ char *test_xdcc_list()
     mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
     bdestroy(msg);
     free(irc_req);
+
+    msg = bformat("%s PRIVMSG otherbot :xdcc list\r\n", dummy);
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("Message to another nick, shouldn't care", irc_req->op != LIST);
+    bdestroy(msg);
+    free(irc_req);
+
+    char *botname = "zomgbot";
+    bdestroy(bot_nickname);
+    bot_nickname = bfromcstr(botname);
+    msg = bformat("%s PRIVMSG %s :xdcc list\r\n", dummy, botname);
+    irc_req = irc_parser(bdata(msg));
+    mu_assert("", irc_req != NULL);
+    mu_assert("Bot nick and nick in message not equal", irc_req->op == LIST);
+    mu_assert("", strcmp("nick", irc_req->remote_nick) == 0);
+    bdestroy(msg);
+    free(irc_req);
+    bdestroy(bot_nickname);
+    bot_nickname = bfromcstr("lolbot");
 
     msg = bformat("%s PRIVMSG lolbot :xdcc list\r\n", dummy2);
     irc_req = irc_parser(bdata(msg));
@@ -288,6 +308,8 @@ char *test_admin()
 
 static
 char *all_tests() {
+    bot_nickname = bfromcstr("lolbot");
+
     mu_run_test(test_xdcc_list);
     mu_run_test(test_xdcc_send);
     mu_run_test(test_xdcc_info);

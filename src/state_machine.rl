@@ -4,13 +4,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <bstring.h>
+
+extern bstring bot_nickname;
 
 %%{
     machine irc_parser;
 
+    botname = (alnum+ >{ botname_start = p; } @{ botname_end = p+1; });
     address = "~" (alnum|"@"|"-"|".")+;
-    botname = "lolbot";
-
     whitespace = space+;
     multi =
         (
@@ -47,6 +49,7 @@ irc_request *irc_parser(char *string)
     int cs, len = strlen(string);
     char *p = string, *pe, *remote_nick, *nick_start, *command;
     char *digit_start = NULL, *digit_end = NULL, *digits;
+    char *botname_start = NULL, *botname_end = NULL, *botname;
     size_t nick_size, s;
     enum irc_operation op = INVALID;
     irc_request *irc_req = malloc(sizeof(irc_request));
@@ -62,6 +65,18 @@ irc_request *irc_parser(char *string)
     if ( cs < %%{ write first_final; }%% ) {
         irc_req->op = INVALID;
         return irc_req;
+    }
+
+    if (botname_start && botname_end) {
+        s = botname_end - botname_start;
+        botname = calloc(s+1, sizeof(char));
+        strncpy(botname, botname_start, s);
+        if (strcmp(botname, bdata(bot_nickname)) != 0) {
+            free(botname);
+            irc_req->op = INVALID;
+            return irc_req;
+        }
+        free(botname);
     }
 
     remote_nick = calloc(nick_size+1, sizeof (char));
