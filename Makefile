@@ -6,12 +6,12 @@ OBJECTS=$(SOURCES:.c=.o)
 TEST_SRC=$(wildcard tests/*.c)
 TESTS=$(patsubst %.c,%,${TEST_SRC})
 
-all: build bin/loldrop tests
+all: build bin/lolbot tests
 
 release: CFLAGS=-g -Os -Wall -Isrc -DNDEBUG
 release: all
 
-bin/loldrop: $(OBJECTS)
+bin/lolbot: $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $@
 
 build:
@@ -39,7 +39,7 @@ ragel:
 	ragel -G2 src/state_machine.rl
 
 valgrind:
-	valgrind --leak-check=full --show-reachable=yes --log-file=valgrind.log --suppressions=tests/valgrind.sup ./bin/loldrop
+	valgrind --leak-check=full --show-reachable=yes --log-file=valgrind.log --suppressions=tests/valgrind.sup ./bin/lolbot
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

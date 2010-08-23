@@ -21,7 +21,7 @@ char *test_xdcc_list()
     irc_request *irc_req;
     bstring msg;
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc list\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc list\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Invalid address format", irc_req->op == LIST);
@@ -29,7 +29,7 @@ char *test_xdcc_list()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc list\r\n", dummy2);
+    msg = bformat("%s PRIVMSG lolbot :xdcc list\r\n", dummy2);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Invalid address format", irc_req->op == LIST);
@@ -37,7 +37,7 @@ char *test_xdcc_list()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc list\r\n", dummy3);
+    msg = bformat("%s PRIVMSG lolbot :xdcc list\r\n", dummy3);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Invalid address format", irc_req->op == LIST);
@@ -45,7 +45,7 @@ char *test_xdcc_list()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :                 xdcc list\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :                 xdcc list\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Many spaces after colon", irc_req->op == LIST);
@@ -53,7 +53,7 @@ char *test_xdcc_list()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop:xdcc list\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot:xdcc list\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Missing space before colon", irc_req->op == INVALID);
@@ -69,7 +69,7 @@ char *test_xdcc_send()
     irc_request *irc_req;
     bstring msg;
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc send #1\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc send #1\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == SEND);
@@ -78,7 +78,7 @@ char *test_xdcc_send()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc send 1\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc send 1\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == SEND);
@@ -87,14 +87,14 @@ char *test_xdcc_send()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc send 1+1\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc send 1+1\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == INVALID);
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc send potatoes\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc send potatoes\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == INVALID);
@@ -110,7 +110,7 @@ char *test_xdcc_info()
     irc_request *irc_req;
     bstring msg;
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc info #1\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc info #1\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == INFO);
@@ -119,7 +119,7 @@ char *test_xdcc_info()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc info 1\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc info 1\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == INFO);
@@ -128,14 +128,14 @@ char *test_xdcc_info()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc info 2+5\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc info 2+5\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == INVALID);
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc info potatoes\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc info potatoes\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == INVALID);
@@ -151,7 +151,7 @@ char *test_xdcc_remove()
     irc_request *irc_req;
     bstring msg;
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc remove #1\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc remove #1\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == REMOVE);
@@ -160,7 +160,7 @@ char *test_xdcc_remove()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc remove 1\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc remove 1\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == REMOVE);
@@ -169,7 +169,7 @@ char *test_xdcc_remove()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc remove\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc remove\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == REMOVE);
@@ -178,14 +178,14 @@ char *test_xdcc_remove()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc remove potatoes\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc remove potatoes\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == INVALID);
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc remove -1\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc remove -1\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("", irc_req->op == INVALID);
@@ -246,14 +246,14 @@ char *test_stupidity()
     mu_assert("Absurd message", irc_req->op == INVALID);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc invalid #1337\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc invalid #1337\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Invalid xdcc operation requested", irc_req->op == INVALID);
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :Hello there, handsome!\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :Hello there, handsome!\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Invalid request/silent bot", irc_req->op == INVALID);
@@ -269,7 +269,7 @@ char *test_admin()
     irc_request *irc_req;
     bstring msg;
 
-    msg = bformat("%s PRIVMSG loldrop :admin 0x123456789 quit\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :admin 0x123456789 quit\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Valid quit admin command", irc_req->op == QUIT);
@@ -277,7 +277,7 @@ char *test_admin()
     bdestroy(msg);
     free(irc_req);
 
-    msg = bformat("%s PRIVMSG loldrop :xdcc admin 0x123456789 quit\r\n", dummy);
+    msg = bformat("%s PRIVMSG lolbot :xdcc admin 0x123456789 quit\r\n", dummy);
     irc_req = irc_parser(bdata(msg));
     mu_assert("", irc_req != NULL);
     mu_assert("Stupid, invalid xdcc and admin mixup", irc_req->op == INVALID);

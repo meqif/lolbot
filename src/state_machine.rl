@@ -9,7 +9,7 @@
     machine irc_parser;
 
     address = "~" (alnum|"@"|"-"|".")+;
-    botname = "loldrop";
+    botname = "lolbot";
 
     whitespace = space+;
     multi =

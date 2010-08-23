@@ -26,8 +26,8 @@ static
 char *test_irc_user() {
     bstring expected;
 
-    expected = bfromcstr("USER loldrop x x :loldrop\r\n");
-    irc_user(SOCK, "loldrop", "loldrop");
+    expected = bfromcstr("USER lolbot x x :lolbot\r\n");
+    irc_user(SOCK, "lolbot", "lolbot");
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
@@ -40,8 +40,8 @@ static
 char *test_irc_nick() {
     bstring expected;
 
-    expected = bfromcstr("NICK loldrop\r\n");
-    irc_nick(SOCK, "loldrop");
+    expected = bfromcstr("NICK lolbot\r\n");
+    irc_nick(SOCK, "lolbot");
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
@@ -54,8 +54,8 @@ static
 char *test_irc_join() {
     bstring expected;
 
-    expected = bfromcstr("JOIN #loldrop\r\n");
-    irc_join(SOCK, "loldrop");
+    expected = bfromcstr("JOIN #lolbot\r\n");
+    irc_join(SOCK, "lolbot");
     mu_assert("Empty message", blength(sent) != 0);
     mu_assert("Message differs from expected", bstrcmp(expected, sent) == 0);
     bdestroy(expected);
