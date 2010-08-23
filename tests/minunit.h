@@ -22,6 +22,19 @@
 
 #define mu_numelem(array) (sizeof(array)/sizeof(*array))
 
+#define RUN_TESTS(name) int main(int argc, char *argv[]) {\
+    char *result = name(); \
+    if (result != 0) { \
+        printf("Failed: %s:%d\n", last_test, line); \
+        printf("%s\n", result); \
+    } else { \
+        printf("ALL TESTS PASSED\n"); \
+        printf("  Tests run : %d\n", tests_run); \
+        printf("  Assertion : %d\n", assertion); \
+    } \
+    return result != 0; \
+}
+
 extern int tests_run;
 extern int assertion;
 extern const char *last_test;

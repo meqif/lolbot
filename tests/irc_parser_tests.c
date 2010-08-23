@@ -9,7 +9,6 @@ int tests_run = 0;
 int assertion = 0;
 const char *last_test = "";
 int line = 0;
-int strdup_fail = 0;
 
 static char *dummy  = ":nick!~user@127.0.0.1";
 static char *dummy2 = ":nick!~user@localhost.com";
@@ -299,20 +298,6 @@ char *all_tests() {
     return NULL;
 }
 
-int main(int argc, char *argv[])
-{
-    char *result = all_tests();
-    if (result != 0) {
-        printf("Failed: %s:%d\n", last_test, line);
-        printf("%s\n", result);
-    } else {
-        printf("ALL TESTS PASSED\n");
-        printf("  Tests run : %d\n", tests_run);
-        printf("  Assertion : %d\n", assertion);
-    }
-
-    return result != 0;
-}
-
+RUN_TESTS(all_tests);
 
 // vim: et ts=4 sw=4 sts=4
