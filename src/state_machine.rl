@@ -11,27 +11,40 @@ extern bstring bot_nickname;
 %%{
     machine irc_parser;
 
-    botname = (alnum+ >{ botname_start = p; } @{ botname_end = p+1; });
+    action mark { mark = fpc; }
+
+    action botname {
+        botname = blk2bstr(mark, fpc-mark);
+    }
+
+    action packnumber {
+        digits = blk2bstr(mark, fpc-mark);
+    }
+
+    action remote_nick {
+        remote_nick = blk2bstr(mark, fpc-mark);
+    }
+
+    botname = alnum+ >mark %botname;
     address = "~" (alnum|"@"|"-"|".")+;
     whitespace = space+;
     multi =
         (
-            "send"   @{ op = SEND; } |
-            "info"   @{ op = INFO; } |
-            "remove" @{ op = REMOVE; }
-        ) whitespace "#"? (digit+ >{ digit_start = p; } @{ digit_end = p+1; } );
+            "send"   @{ irc_req->op = SEND; } |
+            "info"   @{ irc_req->op = INFO; } |
+            "remove" @{ irc_req->op = REMOVE; }
+        ) whitespace "#"? (digit+ >mark %packnumber);
 
     single =
         (
-            "list"   @{ op = LIST; } |
-            "remove" @{ op = REMOVE; }
+            "list"   @{ irc_req->op = LIST; } |
+            "remove" @{ irc_req->op = REMOVE; }
         );
 
-    filler = ":" alnum+ ("!" >{ nick_size = p-nick_start; }) address " PRIVMSG " botname whitespace ":" whitespace*;
-
-    xdcc = ("xdcc" >{ command = p; }) whitespace (single|multi);
-    ping = ("PING" @{ op = PING; }) whitespace ":"? ((alnum|".")+ >{nick_start = p, nick_size = 0;} @{nick_size++;});
-    admin = "admin" whitespace "0x123456789" whitespace "quit" @{ op = QUIT; };
+    filler = ":" alnum+ >mark %remote_nick "!" address " PRIVMSG " botname whitespace ":" whitespace*;
+    xdcc = "xdcc" whitespace (single|multi);
+    ping = ("PING" @{ irc_req->op = PING; }) whitespace ":"? ((alnum|".")+ >mark %remote_nick);
+    admin = "admin" whitespace "0x123456789" whitespace "quit" @{ irc_req->op = QUIT; };
 
     main :=
             ( filler xdcc whitespace* ) |
@@ -46,15 +59,15 @@ irc_request *irc_parser(char *string)
     if (string == NULL)
         return NULL;
 
-    int cs, len = strlen(string);
-    char *p = string, *pe, *remote_nick, *nick_start, *command;
-    char *digit_start = NULL, *digit_end = NULL, *digits;
-    char *botname_start = NULL, *botname_end = NULL, *botname;
-    size_t nick_size, s;
-    enum irc_operation op = INVALID;
+    int cs = 0;
+	int len = strlen(string);
+    const char *p = string;
+	const char *pe = p+len;
+	const char *eof;
+	const char *mark = p;
+    bstring botname = NULL, digits = NULL, remote_nick;
     irc_request *irc_req = malloc(sizeof(irc_request));
-
-    nick_start = string+1;
+    irc_req->op = INVALID;
 
     %% write init;
 
@@ -67,30 +80,17 @@ irc_request *irc_parser(char *string)
         return irc_req;
     }
 
-    if (botname_start && botname_end) {
-        s = botname_end - botname_start;
-        botname = calloc(s+1, sizeof(char));
-        strncpy(botname, botname_start, s);
-        if (strcmp(botname, bdata(bot_nickname)) != 0) {
-            free(botname);
-            irc_req->op = INVALID;
-            return irc_req;
-        }
-        free(botname);
-    }
+    if (botname && bstrcmp(botname, bot_nickname) != 0) {
+		bdestroy(botname);
+		irc_req->op = INVALID;
+		return irc_req;
+	}
 
-    remote_nick = calloc(nick_size+1, sizeof (char));
-    strncpy(remote_nick, nick_start, nick_size);
+    irc_req->remote_nick = bdata(remote_nick);
 
-    irc_req->remote_nick = remote_nick;
-    irc_req->op = op;
-
-    if (digit_start && digit_end) {
-        s = digit_end - digit_start;
-        digits = calloc(s+1, sizeof(char));
-        strncpy(digits, digit_start, s);
-        irc_req->number = atoi(digits);
-        free(digits);
+    if (digits) {
+        irc_req->number = atoi(bdata(digits));
+        bdestroy(digits);
     } else
         irc_req->number = -1;
 

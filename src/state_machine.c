@@ -11,7 +11,7 @@
 extern bstring bot_nickname;
 
 
-#line 40 "src/state_machine.rl"
+#line 53 "src/state_machine.rl"
 
 
 
@@ -23,22 +23,22 @@ static const int irc_parser_error = 0;
 static const int irc_parser_en_main = 1;
 
 
-#line 43 "src/state_machine.rl"
+#line 56 "src/state_machine.rl"
 
 irc_request *irc_parser(char *string)
 {
     if (string == NULL)
         return NULL;
 
-    int cs, len = strlen(string);
-    char *p = string, *pe, *remote_nick, *nick_start, *command;
-    char *digit_start = NULL, *digit_end = NULL, *digits;
-    char *botname_start = NULL, *botname_end = NULL, *botname;
-    size_t nick_size, s;
-    enum irc_operation op = INVALID;
+    int cs = 0;
+	int len = strlen(string);
+    const char *p = string;
+	const char *pe = p+len;
+	const char *eof;
+	const char *mark = p;
+    bstring botname = NULL, digits = NULL, remote_nick;
     irc_request *irc_req = malloc(sizeof(irc_request));
-
-    nick_start = string+1;
+    irc_req->op = INVALID;
 
     
 #line 45 "src/state_machine.c"
@@ -46,7 +46,7 @@ irc_request *irc_parser(char *string)
 	cs = irc_parser_start;
 	}
 
-#line 60 "src/state_machine.rl"
+#line 73 "src/state_machine.rl"
 
     pe = p + len;
 
@@ -72,17 +72,22 @@ st2:
 case 2:
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
-			goto st3;
+			goto tr3;
 	} else if ( (*p) > 90 ) {
 		if ( 97 <= (*p) && (*p) <= 122 )
-			goto st3;
+			goto tr3;
 	} else
-		goto st3;
+		goto tr3;
 	goto st0;
+tr3:
+#line 14 "src/state_machine.rl"
+	{ mark = p; }
+	goto st3;
 st3:
 	if ( ++p == pe )
 		goto _test_eof3;
 case 3:
+#line 91 "src/state_machine.c"
 	if ( (*p) == 33 )
 		goto tr4;
 	if ( (*p) < 65 ) {
@@ -95,14 +100,16 @@ case 3:
 		goto st3;
 	goto st0;
 tr4:
-#line 30 "src/state_machine.rl"
-	{ nick_size = p-nick_start; }
+#line 24 "src/state_machine.rl"
+	{
+        remote_nick = blk2bstr(mark, p-mark);
+    }
 	goto st4;
 st4:
 	if ( ++p == pe )
 		goto _test_eof4;
 case 4:
-#line 106 "src/state_machine.c"
+#line 113 "src/state_machine.c"
 	if ( (*p) == 126 )
 		goto st5;
 	goto st0;
@@ -202,46 +209,47 @@ st15:
 case 15:
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
-			goto tr16;
+			goto tr17;
 	} else if ( (*p) > 90 ) {
 		if ( 97 <= (*p) && (*p) <= 122 )
-			goto tr16;
+			goto tr17;
 	} else
-		goto tr16;
+		goto tr17;
 	goto st0;
-tr16:
+tr17:
 #line 14 "src/state_machine.rl"
-	{ botname_start = p; }
-#line 14 "src/state_machine.rl"
-	{ botname_end = p+1; }
-	goto st16;
-tr18:
-#line 14 "src/state_machine.rl"
-	{ botname_end = p+1; }
+	{ mark = p; }
 	goto st16;
 st16:
 	if ( ++p == pe )
 		goto _test_eof16;
 case 16:
-#line 227 "src/state_machine.c"
+#line 228 "src/state_machine.c"
 	if ( (*p) == 32 )
-		goto st17;
+		goto tr18;
 	if ( (*p) < 48 ) {
 		if ( 9 <= (*p) && (*p) <= 13 )
-			goto st17;
+			goto tr18;
 	} else if ( (*p) > 57 ) {
 		if ( (*p) > 90 ) {
 			if ( 97 <= (*p) && (*p) <= 122 )
-				goto tr18;
+				goto st16;
 		} else if ( (*p) >= 65 )
-			goto tr18;
+			goto st16;
 	} else
-		goto tr18;
+		goto st16;
 	goto st0;
+tr18:
+#line 16 "src/state_machine.rl"
+	{
+        botname = blk2bstr(mark, p-mark);
+    }
+	goto st17;
 st17:
 	if ( ++p == pe )
 		goto _test_eof17;
 case 17:
+#line 253 "src/state_machine.c"
 	switch( (*p) ) {
 		case 32: goto st17;
 		case 58: goto st18;
@@ -256,7 +264,7 @@ case 18:
 	switch( (*p) ) {
 		case 32: goto st18;
 		case 97: goto st19;
-		case 120: goto tr21;
+		case 120: goto st40;
 	}
 	if ( 9 <= (*p) && (*p) <= 13 )
 		goto st18;
@@ -418,35 +426,42 @@ st39:
 		goto _test_eof39;
 case 39:
 	if ( (*p) == 116 )
-		goto tr42;
+		goto tr44;
 	goto st0;
-tr42:
-#line 34 "src/state_machine.rl"
-	{ op = QUIT; }
+tr80:
+#line 24 "src/state_machine.rl"
+	{
+        remote_nick = blk2bstr(mark, p-mark);
+    }
 	goto st68;
-tr59:
-#line 26 "src/state_machine.rl"
-	{ op = LIST; }
+tr44:
+#line 47 "src/state_machine.rl"
+	{ irc_req->op = QUIT; }
+	goto st68;
+tr61:
+#line 40 "src/state_machine.rl"
+	{ irc_req->op = LIST; }
+	goto st68;
+tr77:
+#line 20 "src/state_machine.rl"
+	{
+        digits = blk2bstr(mark, p-mark);
+    }
 	goto st68;
 st68:
 	if ( ++p == pe )
 		goto _test_eof68;
 case 68:
-#line 436 "src/state_machine.c"
+#line 456 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st68;
 	if ( 9 <= (*p) && (*p) <= 13 )
 		goto st68;
 	goto st0;
-tr21:
-#line 32 "src/state_machine.rl"
-	{ command = p; }
-	goto st40;
 st40:
 	if ( ++p == pe )
 		goto _test_eof40;
 case 40:
-#line 450 "src/state_machine.c"
 	if ( (*p) == 100 )
 		goto st41;
 	goto st0;
@@ -506,21 +521,21 @@ st47:
 		goto _test_eof47;
 case 47:
 	if ( (*p) == 111 )
-		goto tr53;
+		goto tr55;
 	goto st0;
-tr53:
-#line 20 "src/state_machine.rl"
-	{ op = INFO; }
+tr55:
+#line 34 "src/state_machine.rl"
+	{ irc_req->op = INFO; }
 	goto st48;
-tr67:
-#line 19 "src/state_machine.rl"
-	{ op = SEND; }
+tr69:
+#line 33 "src/state_machine.rl"
+	{ irc_req->op = SEND; }
 	goto st48;
 st48:
 	if ( ++p == pe )
 		goto _test_eof48;
 case 48:
-#line 524 "src/state_machine.c"
+#line 539 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st49;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -536,7 +551,7 @@ case 49:
 	}
 	if ( (*p) > 13 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
-			goto tr56;
+			goto tr58;
 	} else if ( (*p) >= 9 )
 		goto st49;
 	goto st0;
@@ -545,30 +560,24 @@ st50:
 		goto _test_eof50;
 case 50:
 	if ( 48 <= (*p) && (*p) <= 57 )
-		goto tr56;
+		goto tr58;
 	goto st0;
-tr56:
-#line 22 "src/state_machine.rl"
-	{ digit_start = p; }
-#line 22 "src/state_machine.rl"
-	{ digit_end = p+1; }
-	goto st69;
-tr75:
-#line 22 "src/state_machine.rl"
-	{ digit_end = p+1; }
+tr58:
+#line 14 "src/state_machine.rl"
+	{ mark = p; }
 	goto st69;
 st69:
 	if ( ++p == pe )
 		goto _test_eof69;
 case 69:
-#line 565 "src/state_machine.c"
+#line 574 "src/state_machine.c"
 	if ( (*p) == 32 )
-		goto st68;
+		goto tr77;
 	if ( (*p) > 13 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
-			goto tr75;
+			goto st69;
 	} else if ( (*p) >= 9 )
-		goto st68;
+		goto tr77;
 	goto st0;
 st51:
 	if ( ++p == pe )
@@ -589,7 +598,7 @@ st53:
 		goto _test_eof53;
 case 53:
 	if ( (*p) == 116 )
-		goto tr59;
+		goto tr61;
 	goto st0;
 st54:
 	if ( ++p == pe )
@@ -624,19 +633,19 @@ st58:
 		goto _test_eof58;
 case 58:
 	if ( (*p) == 101 )
-		goto tr64;
+		goto tr66;
 	goto st0;
-tr64:
-#line 27 "src/state_machine.rl"
-	{ op = REMOVE; }
-#line 21 "src/state_machine.rl"
-	{ op = REMOVE; }
+tr66:
+#line 41 "src/state_machine.rl"
+	{ irc_req->op = REMOVE; }
+#line 35 "src/state_machine.rl"
+	{ irc_req->op = REMOVE; }
 	goto st70;
 st70:
 	if ( ++p == pe )
 		goto _test_eof70;
 case 70:
-#line 640 "src/state_machine.c"
+#line 649 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st71;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -652,7 +661,7 @@ case 71:
 	}
 	if ( (*p) > 13 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
-			goto tr56;
+			goto tr58;
 	} else if ( (*p) >= 9 )
 		goto st71;
 	goto st0;
@@ -675,7 +684,7 @@ st61:
 		goto _test_eof61;
 case 61:
 	if ( (*p) == 100 )
-		goto tr67;
+		goto tr69;
 	goto st0;
 st62:
 	if ( ++p == pe )
@@ -696,17 +705,17 @@ st64:
 		goto _test_eof64;
 case 64:
 	if ( (*p) == 71 )
-		goto tr70;
+		goto tr72;
 	goto st0;
-tr70:
-#line 33 "src/state_machine.rl"
-	{ op = PING; }
+tr72:
+#line 46 "src/state_machine.rl"
+	{ irc_req->op = PING; }
 	goto st65;
 st65:
 	if ( ++p == pe )
 		goto _test_eof65;
 case 65:
-#line 710 "src/state_machine.c"
+#line 719 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st66;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -718,7 +727,7 @@ st66:
 case 66:
 	switch( (*p) ) {
 		case 32: goto st66;
-		case 46: goto tr72;
+		case 46: goto tr74;
 		case 58: goto st67;
 	}
 	if ( (*p) < 48 ) {
@@ -727,57 +736,51 @@ case 66:
 	} else if ( (*p) > 57 ) {
 		if ( (*p) > 90 ) {
 			if ( 97 <= (*p) && (*p) <= 122 )
-				goto tr72;
+				goto tr74;
 		} else if ( (*p) >= 65 )
-			goto tr72;
+			goto tr74;
 	} else
-		goto tr72;
+		goto tr74;
 	goto st0;
-tr72:
-#line 33 "src/state_machine.rl"
-	{nick_start = p, nick_size = 0;}
-#line 33 "src/state_machine.rl"
-	{nick_size++;}
-	goto st72;
-tr77:
-#line 33 "src/state_machine.rl"
-	{nick_size++;}
+tr74:
+#line 14 "src/state_machine.rl"
+	{ mark = p; }
 	goto st72;
 st72:
 	if ( ++p == pe )
 		goto _test_eof72;
 case 72:
-#line 751 "src/state_machine.c"
+#line 754 "src/state_machine.c"
 	switch( (*p) ) {
-		case 32: goto st68;
-		case 46: goto tr77;
+		case 32: goto tr80;
+		case 46: goto st72;
 	}
 	if ( (*p) < 48 ) {
 		if ( 9 <= (*p) && (*p) <= 13 )
-			goto st68;
+			goto tr80;
 	} else if ( (*p) > 57 ) {
 		if ( (*p) > 90 ) {
 			if ( 97 <= (*p) && (*p) <= 122 )
-				goto tr77;
+				goto st72;
 		} else if ( (*p) >= 65 )
-			goto tr77;
+			goto st72;
 	} else
-		goto tr77;
+		goto st72;
 	goto st0;
 st67:
 	if ( ++p == pe )
 		goto _test_eof67;
 case 67:
 	if ( (*p) == 46 )
-		goto tr72;
+		goto tr74;
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
-			goto tr72;
+			goto tr74;
 	} else if ( (*p) > 90 ) {
 		if ( 97 <= (*p) && (*p) <= 122 )
-			goto tr72;
+			goto tr74;
 	} else
-		goto tr72;
+		goto tr74;
 	goto st0;
 	}
 	_test_eof2: cs = 2; goto _test_eof; 
@@ -853,44 +856,50 @@ case 67:
 	_test_eof67: cs = 67; goto _test_eof; 
 
 	_test_eof: {}
+	if ( p == eof )
+	{
+	switch ( cs ) {
+	case 69: 
+#line 20 "src/state_machine.rl"
+	{
+        digits = blk2bstr(mark, p-mark);
+    }
+	break;
+	case 72: 
+#line 24 "src/state_machine.rl"
+	{
+        remote_nick = blk2bstr(mark, p-mark);
+    }
+	break;
+#line 875 "src/state_machine.c"
+	}
+	}
+
 	_out: {}
 	}
 
-#line 64 "src/state_machine.rl"
+#line 77 "src/state_machine.rl"
 
     if ( cs < 
-#line 863 "src/state_machine.c"
+#line 885 "src/state_machine.c"
 68
-#line 65 "src/state_machine.rl"
+#line 78 "src/state_machine.rl"
  ) {
         irc_req->op = INVALID;
         return irc_req;
     }
 
-    if (botname_start && botname_end) {
-        s = botname_end - botname_start;
-        botname = calloc(s+1, sizeof(char));
-        strncpy(botname, botname_start, s);
-        if (strcmp(botname, bdata(bot_nickname)) != 0) {
-            free(botname);
-            irc_req->op = INVALID;
-            return irc_req;
-        }
-        free(botname);
-    }
+    if (botname && bstrcmp(botname, bot_nickname) != 0) {
+		bdestroy(botname);
+		irc_req->op = INVALID;
+		return irc_req;
+	}
 
-    remote_nick = calloc(nick_size+1, sizeof (char));
-    strncpy(remote_nick, nick_start, nick_size);
+    irc_req->remote_nick = bdata(remote_nick);
 
-    irc_req->remote_nick = remote_nick;
-    irc_req->op = op;
-
-    if (digit_start && digit_end) {
-        s = digit_end - digit_start;
-        digits = calloc(s+1, sizeof(char));
-        strncpy(digits, digit_start, s);
-        irc_req->number = atoi(digits);
-        free(digits);
+    if (digits) {
+        irc_req->number = atoi(bdata(digits));
+        bdestroy(digits);
     } else
         irc_req->number = -1;
 
