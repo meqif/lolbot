@@ -18,17 +18,17 @@ char *test_ipv4_conversion()
 
     strIP = bfromcstr("8.8.8.8");
     ip = (8 | 8 << 8 | 8 << 16 | 8 << 24);
-    mu_assert("", ipv4_str_to_int(bdata(strIP)) == ip);
+    mu_assert("8.8.8.8", ipv4_str_to_int(bdata(strIP)) == ip);
     bdestroy(strIP);
 
     strIP = bfromcstr("127.0.0.1");
     ip = (127 | 0 << 8 | 0 << 16 | 1 << 24);
-    mu_assert("", ipv4_str_to_int(bdata(strIP)) == ip);
+    mu_assert("127.0.0.1", ipv4_str_to_int(bdata(strIP)) == ip);
     bdestroy(strIP);
 
     strIP = bfromcstr("192.168.2.1");
     ip = (192 | 168 << 8 | 2 << 16 | 1 << 24);
-    mu_assert("", ipv4_str_to_int(bdata(strIP)) == ip);
+    mu_assert("192.168.2.1", ipv4_str_to_int(bdata(strIP)) == ip);
     bdestroy(strIP);
 
     return NULL;
