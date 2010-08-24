@@ -31,6 +31,10 @@ char *test_ipv4_conversion()
     mu_assert("192.168.2.1", ipv4_str_to_int(bdata(strIP)) == ip);
     bdestroy(strIP);
 
+    strIP = bfromcstr("Error");
+    mu_assert("Malformed string", ipv4_str_to_int(bdata(strIP)) == -1);
+    bdestroy(strIP);
+
     return NULL;
 }
 
