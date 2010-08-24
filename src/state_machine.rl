@@ -85,7 +85,7 @@ irc_request *irc_parser(char *string)
         return irc_req;
     }
 
-    irc_req->remote_nick = bdata(remote_nick);
+    irc_req->remote_nick = remote_nick;
 
     if (digits) {
         irc_req->number = atoi(bdata(digits));

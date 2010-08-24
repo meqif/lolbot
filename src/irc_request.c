@@ -8,7 +8,7 @@ void IrcRequest_free(irc_request *irc_req)
         return;
 
     if (irc_req != NULL)
-        free(irc_req->remote_nick);
+        bdestroy(irc_req->remote_nick);
 
     free(irc_req);
 }

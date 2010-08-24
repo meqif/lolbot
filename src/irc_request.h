@@ -3,6 +3,8 @@
 #ifndef irc_request_h
 #define irc_request_h
 
+#include <bstring.h>
+
 enum irc_operation {
     INVALID,
     SEND,
@@ -15,7 +17,7 @@ enum irc_operation {
 };
 
 typedef struct {
-    char *remote_nick;
+    bstring remote_nick;
     enum irc_operation op;
     int number;
 } irc_request;
