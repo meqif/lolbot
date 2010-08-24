@@ -66,7 +66,7 @@ irc_request *irc_parser(char *string)
     const char *eof = NULL;
     const char *mark = p;
     bstring botname = NULL, digits = NULL, remote_nick;
-    irc_request *irc_req = malloc(sizeof(irc_request));
+    irc_request *irc_req = calloc(1, sizeof(irc_request));
     irc_req->op = INVALID;
 
     %% write init;
