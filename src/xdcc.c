@@ -37,8 +37,13 @@ int ipv4_str_to_int(char *str)
             free(tmp);
             ptr = str+1;
         }
+        if (*str == 0)
+            break;
         str++;
     }
+
+    if (i != 4)
+        return -1;
 
     return gamma.x;
 }
