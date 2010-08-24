@@ -71,8 +71,6 @@ irc_request *irc_parser(char *string)
 
     %% write init;
 
-    pe = p + len;
-
     %% write exec;
 
     if (botname && bstrcmp(botname, bot_nickname) != 0) {
