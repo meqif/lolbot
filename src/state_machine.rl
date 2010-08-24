@@ -22,7 +22,7 @@ extern bstring bot_nickname;
     }
 
     action remote_nick {
-        remote_nick = blk2bstr(mark, fpc-mark);
+        irc_req->remote_nick = blk2bstr(mark, fpc-mark);
     }
 
     botname = alnum+ >mark %botname;
@@ -65,7 +65,7 @@ irc_request *irc_parser(char *string)
     const char *pe = p+len;
     const char *eof = NULL;
     const char *mark = p;
-    bstring botname = NULL, digits = NULL, remote_nick;
+    bstring botname = NULL, digits = NULL;
     irc_request *irc_req = calloc(1, sizeof(irc_request));
     irc_req->op = INVALID;
 
@@ -84,8 +84,6 @@ irc_request *irc_parser(char *string)
         irc_req->op = INVALID;
         return irc_req;
     }
-
-    irc_req->remote_nick = remote_nick;
 
     if (digits) {
         irc_req->number = atoi(bdata(digits));

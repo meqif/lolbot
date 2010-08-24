@@ -36,7 +36,7 @@ irc_request *irc_parser(char *string)
     const char *pe = p+len;
     const char *eof = NULL;
     const char *mark = p;
-    bstring botname = NULL, digits = NULL, remote_nick;
+    bstring botname = NULL, digits = NULL;
     irc_request *irc_req = calloc(1, sizeof(irc_request));
     irc_req->op = INVALID;
 
@@ -100,7 +100,7 @@ case 3:
 tr4:
 #line 24 "src/state_machine.rl"
 	{
-        remote_nick = blk2bstr(mark, p-mark);
+        irc_req->remote_nick = blk2bstr(mark, p-mark);
     }
 	goto st4;
 st4:
@@ -429,7 +429,7 @@ case 39:
 tr80:
 #line 24 "src/state_machine.rl"
 	{
-        remote_nick = blk2bstr(mark, p-mark);
+        irc_req->remote_nick = blk2bstr(mark, p-mark);
     }
 	goto st68;
 tr44:
@@ -866,7 +866,7 @@ case 67:
 	case 72: 
 #line 24 "src/state_machine.rl"
 	{
-        remote_nick = blk2bstr(mark, p-mark);
+        irc_req->remote_nick = blk2bstr(mark, p-mark);
     }
 	break;
 #line 873 "src/state_machine.c"
@@ -893,8 +893,6 @@ case 67:
         irc_req->op = INVALID;
         return irc_req;
     }
-
-    irc_req->remote_nick = remote_nick;
 
     if (digits) {
         irc_req->number = atoi(bdata(digits));
