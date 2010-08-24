@@ -22,6 +22,7 @@ typedef struct {
     int number;
 } irc_request;
 
+irc_request *IrcRequest_create();
 void IrcRequest_free(irc_request *irc_req);
 
 #endif
