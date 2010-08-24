@@ -20,4 +20,6 @@ typedef struct {
     int number;
 } irc_request;
 
+void IrcRequest_free(irc_request *irc_req);
+
 #endif
