@@ -85,6 +85,7 @@ irc_request *irc_parser(char *string)
         irc_req->op = INVALID;
         return irc_req;
     }
+    bdestroy(botname);
 
     irc_req->remote_nick = bdata(remote_nick);
 

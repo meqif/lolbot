@@ -894,6 +894,7 @@ case 67:
         irc_req->op = INVALID;
         return irc_req;
     }
+    bdestroy(botname);
 
     irc_req->remote_nick = bdata(remote_nick);
 
