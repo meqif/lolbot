@@ -31,8 +31,9 @@ int ipv4_str_to_int(char *str)
 
     while(i < 4) {
         if (*str == '.' || *str == 0) {
-            char *tmp = calloc(4, sizeof(char));
-            strncpy(tmp, ptr, str-ptr);
+            ssize_t len = str-ptr;
+            char *tmp = calloc(len+1, sizeof(char));
+            strncpy(tmp, ptr, len);
             gamma.y[i++] = atoi(tmp);
             free(tmp);
             ptr = str+1;
