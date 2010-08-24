@@ -1,6 +1,7 @@
 #include "minunit.h"
 #include <globals.h>
 #include <state_machine.h>
+#include <irc_request.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <bstring.h>

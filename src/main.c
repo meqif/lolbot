@@ -1,8 +1,8 @@
+#include "irc_request.h"
 #include "state_machine.h"
 #include "handler.h"
 #include "network.h"
 #include "irc.h"
-#include "globals.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

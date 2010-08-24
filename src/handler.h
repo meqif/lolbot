@@ -4,6 +4,7 @@
 #define handler_h
 
 #include "state_machine.h"
+#include "irc_request.h"
 
 struct file_data {
     char *filename;
