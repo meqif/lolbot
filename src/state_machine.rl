@@ -15,6 +15,8 @@ extern bstring bot_nickname;
 
     action botname {
         botname = blk2bstr(mark, fpc-mark);
+        if (botname && bstrcmp(botname, bot_nickname) != 0)
+            fbreak;
     }
 
     action packnumber {
@@ -71,14 +73,8 @@ irc_request *irc_parser(char *string)
     irc_request *irc_req = IrcRequest_create();
 
     %% write init;
-
     %% write exec;
 
-    if (botname && bstrcmp(botname, bot_nickname) != 0) {
-        bdestroy(botname);
-        irc_req->op = INVALID;
-        return irc_req;
-    }
     bdestroy(botname);
 
     if ( cs < %%{ write first_final; }%% ) {
