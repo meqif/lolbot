@@ -317,6 +317,8 @@ char *all_tests() {
     mu_run_test(test_ping_pong);
     mu_run_test(test_stupidity);
     mu_run_test(test_admin);
+
+    bdestroy(bot_nickname);
     return NULL;
 }
 
