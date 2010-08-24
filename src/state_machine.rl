@@ -66,8 +66,7 @@ irc_request *irc_parser(char *string)
     const char *eof = NULL;
     const char *mark = p;
     bstring botname = NULL, digits = NULL;
-    irc_request *irc_req = calloc(1, sizeof(irc_request));
-    irc_req->op = INVALID;
+    irc_request *irc_req = IrcRequest_create();
 
     %% write init;
 
@@ -88,8 +87,7 @@ irc_request *irc_parser(char *string)
     if (digits) {
         irc_req->number = atoi(bdata(digits));
         bdestroy(digits);
-    } else
-        irc_req->number = -1;
+    }
 
     return irc_req;
 }

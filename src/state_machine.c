@@ -37,19 +37,18 @@ irc_request *irc_parser(char *string)
     const char *eof = NULL;
     const char *mark = p;
     bstring botname = NULL, digits = NULL;
-    irc_request *irc_req = calloc(1, sizeof(irc_request));
-    irc_req->op = INVALID;
+    irc_request *irc_req = IrcRequest_create();
 
     
-#line 45 "src/state_machine.c"
+#line 44 "src/state_machine.c"
 	{
 	cs = irc_parser_start;
 	}
 
-#line 73 "src/state_machine.rl"
+#line 72 "src/state_machine.rl"
 
     
-#line 53 "src/state_machine.c"
+#line 52 "src/state_machine.c"
 	{
 	if ( p == pe )
 		goto _test_eof;
@@ -85,7 +84,7 @@ st3:
 	if ( ++p == pe )
 		goto _test_eof3;
 case 3:
-#line 89 "src/state_machine.c"
+#line 88 "src/state_machine.c"
 	if ( (*p) == 33 )
 		goto tr4;
 	if ( (*p) < 65 ) {
@@ -107,7 +106,7 @@ st4:
 	if ( ++p == pe )
 		goto _test_eof4;
 case 4:
-#line 111 "src/state_machine.c"
+#line 110 "src/state_machine.c"
 	if ( (*p) == 126 )
 		goto st5;
 	goto st0;
@@ -222,7 +221,7 @@ st16:
 	if ( ++p == pe )
 		goto _test_eof16;
 case 16:
-#line 226 "src/state_machine.c"
+#line 225 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto tr18;
 	if ( (*p) < 48 ) {
@@ -247,7 +246,7 @@ st17:
 	if ( ++p == pe )
 		goto _test_eof17;
 case 17:
-#line 251 "src/state_machine.c"
+#line 250 "src/state_machine.c"
 	switch( (*p) ) {
 		case 32: goto st17;
 		case 58: goto st18;
@@ -450,7 +449,7 @@ st68:
 	if ( ++p == pe )
 		goto _test_eof68;
 case 68:
-#line 454 "src/state_machine.c"
+#line 453 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st68;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -533,7 +532,7 @@ st48:
 	if ( ++p == pe )
 		goto _test_eof48;
 case 48:
-#line 537 "src/state_machine.c"
+#line 536 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st49;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -568,7 +567,7 @@ st69:
 	if ( ++p == pe )
 		goto _test_eof69;
 case 69:
-#line 572 "src/state_machine.c"
+#line 571 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto tr77;
 	if ( (*p) > 13 ) {
@@ -643,7 +642,7 @@ st70:
 	if ( ++p == pe )
 		goto _test_eof70;
 case 70:
-#line 647 "src/state_machine.c"
+#line 646 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st71;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -713,7 +712,7 @@ st65:
 	if ( ++p == pe )
 		goto _test_eof65;
 case 65:
-#line 717 "src/state_machine.c"
+#line 716 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st66;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -748,7 +747,7 @@ st72:
 	if ( ++p == pe )
 		goto _test_eof72;
 case 72:
-#line 752 "src/state_machine.c"
+#line 751 "src/state_machine.c"
 	switch( (*p) ) {
 		case 32: goto tr80;
 		case 46: goto st72;
@@ -869,14 +868,14 @@ case 67:
         irc_req->remote_nick = blk2bstr(mark, p-mark);
     }
 	break;
-#line 873 "src/state_machine.c"
+#line 872 "src/state_machine.c"
 	}
 	}
 
 	_out: {}
 	}
 
-#line 75 "src/state_machine.rl"
+#line 74 "src/state_machine.rl"
 
     if (botname && bstrcmp(botname, bot_nickname) != 0) {
         bdestroy(botname);
@@ -886,9 +885,9 @@ case 67:
     bdestroy(botname);
 
     if ( cs < 
-#line 890 "src/state_machine.c"
+#line 889 "src/state_machine.c"
 68
-#line 83 "src/state_machine.rl"
+#line 82 "src/state_machine.rl"
  ) {
         irc_req->op = INVALID;
         return irc_req;
