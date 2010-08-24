@@ -19,6 +19,8 @@ extern bstring bot_nickname;
 
     action packnumber {
         digits = blk2bstr(mark, fpc-mark);
+        irc_req->number = atoi(bdata(digits));
+        bdestroy(digits);
     }
 
     action remote_nick {
@@ -82,11 +84,6 @@ irc_request *irc_parser(char *string)
     if ( cs < %%{ write first_final; }%% ) {
         irc_req->op = INVALID;
         return irc_req;
-    }
-
-    if (digits) {
-        irc_req->number = atoi(bdata(digits));
-        bdestroy(digits);
     }
 
     return irc_req;

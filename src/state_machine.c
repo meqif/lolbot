@@ -11,7 +11,7 @@
 extern bstring bot_nickname;
 
 
-#line 53 "src/state_machine.rl"
+#line 55 "src/state_machine.rl"
 
 
 
@@ -23,7 +23,7 @@ static const int irc_parser_error = 0;
 static const int irc_parser_en_main = 1;
 
 
-#line 56 "src/state_machine.rl"
+#line 58 "src/state_machine.rl"
 
 irc_request *irc_parser(char *string)
 {
@@ -45,7 +45,7 @@ irc_request *irc_parser(char *string)
 	cs = irc_parser_start;
 	}
 
-#line 72 "src/state_machine.rl"
+#line 74 "src/state_machine.rl"
 
     
 #line 52 "src/state_machine.c"
@@ -97,7 +97,7 @@ case 3:
 		goto st3;
 	goto st0;
 tr4:
-#line 24 "src/state_machine.rl"
+#line 26 "src/state_machine.rl"
 	{
         irc_req->remote_nick = blk2bstr(mark, p-mark);
     }
@@ -426,30 +426,32 @@ case 39:
 		goto tr44;
 	goto st0;
 tr80:
-#line 24 "src/state_machine.rl"
+#line 26 "src/state_machine.rl"
 	{
         irc_req->remote_nick = blk2bstr(mark, p-mark);
     }
 	goto st68;
 tr44:
-#line 47 "src/state_machine.rl"
+#line 49 "src/state_machine.rl"
 	{ irc_req->op = QUIT; }
 	goto st68;
 tr61:
-#line 40 "src/state_machine.rl"
+#line 42 "src/state_machine.rl"
 	{ irc_req->op = LIST; }
 	goto st68;
 tr77:
 #line 20 "src/state_machine.rl"
 	{
         digits = blk2bstr(mark, p-mark);
+        irc_req->number = atoi(bdata(digits));
+        bdestroy(digits);
     }
 	goto st68;
 st68:
 	if ( ++p == pe )
 		goto _test_eof68;
 case 68:
-#line 453 "src/state_machine.c"
+#line 455 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st68;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -521,18 +523,18 @@ case 47:
 		goto tr55;
 	goto st0;
 tr55:
-#line 34 "src/state_machine.rl"
+#line 36 "src/state_machine.rl"
 	{ irc_req->op = INFO; }
 	goto st48;
 tr69:
-#line 33 "src/state_machine.rl"
+#line 35 "src/state_machine.rl"
 	{ irc_req->op = SEND; }
 	goto st48;
 st48:
 	if ( ++p == pe )
 		goto _test_eof48;
 case 48:
-#line 536 "src/state_machine.c"
+#line 538 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st49;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -567,7 +569,7 @@ st69:
 	if ( ++p == pe )
 		goto _test_eof69;
 case 69:
-#line 571 "src/state_machine.c"
+#line 573 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto tr77;
 	if ( (*p) > 13 ) {
@@ -633,16 +635,16 @@ case 58:
 		goto tr66;
 	goto st0;
 tr66:
-#line 41 "src/state_machine.rl"
+#line 43 "src/state_machine.rl"
 	{ irc_req->op = REMOVE; }
-#line 35 "src/state_machine.rl"
+#line 37 "src/state_machine.rl"
 	{ irc_req->op = REMOVE; }
 	goto st70;
 st70:
 	if ( ++p == pe )
 		goto _test_eof70;
 case 70:
-#line 646 "src/state_machine.c"
+#line 648 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st71;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -705,14 +707,14 @@ case 64:
 		goto tr72;
 	goto st0;
 tr72:
-#line 46 "src/state_machine.rl"
+#line 48 "src/state_machine.rl"
 	{ irc_req->op = PING; }
 	goto st65;
 st65:
 	if ( ++p == pe )
 		goto _test_eof65;
 case 65:
-#line 716 "src/state_machine.c"
+#line 718 "src/state_machine.c"
 	if ( (*p) == 32 )
 		goto st66;
 	if ( 9 <= (*p) && (*p) <= 13 )
@@ -747,7 +749,7 @@ st72:
 	if ( ++p == pe )
 		goto _test_eof72;
 case 72:
-#line 751 "src/state_machine.c"
+#line 753 "src/state_machine.c"
 	switch( (*p) ) {
 		case 32: goto tr80;
 		case 46: goto st72;
@@ -860,22 +862,24 @@ case 67:
 #line 20 "src/state_machine.rl"
 	{
         digits = blk2bstr(mark, p-mark);
+        irc_req->number = atoi(bdata(digits));
+        bdestroy(digits);
     }
 	break;
 	case 72: 
-#line 24 "src/state_machine.rl"
+#line 26 "src/state_machine.rl"
 	{
         irc_req->remote_nick = blk2bstr(mark, p-mark);
     }
 	break;
-#line 872 "src/state_machine.c"
+#line 876 "src/state_machine.c"
 	}
 	}
 
 	_out: {}
 	}
 
-#line 74 "src/state_machine.rl"
+#line 76 "src/state_machine.rl"
 
     if (botname && bstrcmp(botname, bot_nickname) != 0) {
         bdestroy(botname);
@@ -885,19 +889,13 @@ case 67:
     bdestroy(botname);
 
     if ( cs < 
-#line 889 "src/state_machine.c"
+#line 893 "src/state_machine.c"
 68
-#line 82 "src/state_machine.rl"
+#line 84 "src/state_machine.rl"
  ) {
         irc_req->op = INVALID;
         return irc_req;
     }
-
-    if (digits) {
-        irc_req->number = atoi(bdata(digits));
-        bdestroy(digits);
-    } else
-        irc_req->number = -1;
 
     return irc_req;
 }
