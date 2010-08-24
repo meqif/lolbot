@@ -31,11 +31,11 @@ irc_request *irc_parser(char *string)
         return NULL;
 
     int cs = 0;
-	int len = strlen(string);
+    int len = strlen(string);
     const char *p = string;
-	const char *pe = p+len;
-	const char *eof;
-	const char *mark = p;
+    const char *pe = p+len;
+    const char *eof;
+    const char *mark = p;
     bstring botname = NULL, digits = NULL, remote_nick;
     irc_request *irc_req = malloc(sizeof(irc_request));
     irc_req->op = INVALID;
@@ -890,10 +890,10 @@ case 67:
     }
 
     if (botname && bstrcmp(botname, bot_nickname) != 0) {
-		bdestroy(botname);
-		irc_req->op = INVALID;
-		return irc_req;
-	}
+        bdestroy(botname);
+        irc_req->op = INVALID;
+        return irc_req;
+    }
 
     irc_req->remote_nick = bdata(remote_nick);
 
