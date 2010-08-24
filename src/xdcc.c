@@ -19,8 +19,7 @@ extern struct file_data *files;
 struct xdcc_request *request;
 
 /* Converts an IPv4 address given in a string to the corresponding integer */
-static
-int foo(char *str)
+int ipv4_str_to_int(char *str)
 {
     union {
         int x;
@@ -64,7 +63,7 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
     listen(newsock, 4);
 
     // Send details to client
-    int addr = htonl(foo(ip));
+    int addr = htonl(ipv4_str_to_int(ip));
 
     request = malloc(sizeof(struct xdcc_request));
     request->file = requested_file;
