@@ -63,7 +63,7 @@ irc_request *irc_parser(char *string)
     int len = strlen(string);
     const char *p = string;
     const char *pe = p+len;
-    const char *eof;
+    const char *eof = NULL;
     const char *mark = p;
     bstring botname = NULL, digits = NULL, remote_nick;
     irc_request *irc_req = malloc(sizeof(irc_request));
