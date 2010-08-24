@@ -15,7 +15,7 @@ int line = 0;
 bstring sent;
 
 /* Override send in order to be able to intercept what would be sent */
-int send(int socket, const void *buffer, size_t length, int flags)
+ssize_t send(int s, const void *buffer, size_t length, int flags)
 {
     sent = bfromcstr(buffer);
     return 0;
