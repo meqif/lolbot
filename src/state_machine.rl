@@ -75,17 +75,17 @@ irc_request *irc_parser(char *string)
 
     %% write exec;
 
-    if ( cs < %%{ write first_final; }%% ) {
-        irc_req->op = INVALID;
-        return irc_req;
-    }
-
     if (botname && bstrcmp(botname, bot_nickname) != 0) {
         bdestroy(botname);
         irc_req->op = INVALID;
         return irc_req;
     }
     bdestroy(botname);
+
+    if ( cs < %%{ write first_final; }%% ) {
+        irc_req->op = INVALID;
+        return irc_req;
+    }
 
     irc_req->remote_nick = bdata(remote_nick);
 

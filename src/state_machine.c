@@ -880,21 +880,21 @@ case 67:
 
 #line 77 "src/state_machine.rl"
 
-    if ( cs < 
-#line 885 "src/state_machine.c"
-68
-#line 78 "src/state_machine.rl"
- ) {
-        irc_req->op = INVALID;
-        return irc_req;
-    }
-
     if (botname && bstrcmp(botname, bot_nickname) != 0) {
         bdestroy(botname);
         irc_req->op = INVALID;
         return irc_req;
     }
     bdestroy(botname);
+
+    if ( cs < 
+#line 892 "src/state_machine.c"
+68
+#line 85 "src/state_machine.rl"
+ ) {
+        irc_req->op = INVALID;
+        return irc_req;
+    }
 
     irc_req->remote_nick = bdata(remote_nick);
 
