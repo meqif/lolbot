@@ -87,7 +87,7 @@ int init_server(char *nick, char *path)
         char *list[dir_size];
         while ( (d = readdir(dir)) ) {
             if (d->d_ino != 0) /* Ignore invalid inodes */
-                list[i++] = strdup(d->d_name);
+                list[i++] = d->d_name;
         }
         list[i] = NULL;
 
@@ -115,7 +115,6 @@ int init_server(char *nick, char *path)
                 free(s);
                 idx++;
             }
-            free(list[i]);
         }
         nfiles = idx;
 
