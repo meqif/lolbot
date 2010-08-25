@@ -6,12 +6,12 @@ file serving and distribution via the DCC protocol.
 == Usage
 
   usage: lolbot [options]
-    -h  --help	print this usage and exit
-    -s  --server	irc server to connect
-    -p  --port	irc server's port (optional, defaults to 6667)
-    -d  --path	path to shared directory
-    -c  --channel	channel to join
-    -n  --nick	nickname to be used
+    -h  --help    	print this usage and exit
+    -s  --server  	irc server to connect
+    -p  --port    	irc server's port (optional, defaults to 6667)
+    -d  --path    	path to shared directory
+    -c  --channel 	channel to join
+    -n  --nick    	nickname to be used
 
 For instance
 

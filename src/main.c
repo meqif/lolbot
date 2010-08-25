@@ -25,12 +25,12 @@ static struct option long_opts[] = {
 
 static void usage() {
     fprintf(stderr, "usage: lolbot [options]\n"
-                    "  -h  --help\tprint this usage and exit\n"
-                    "  -s  --server\tirc server to connect\n"
-                    "  -p  --port\tirc server's port (optional, defaults to 6667)\n"
-                    "  -d  --path\tpath to shared directory\n"
-                    "  -c  --channel\tchannel to join\n"
-                    "  -n  --nick\tnickname to be used\n"
+                    "  -h  --help    \tprint this usage and exit\n"
+                    "  -s  --server  \tirc server to connect\n"
+                    "  -p  --port    \tirc server's port (optional, defaults to 6667)\n"
+                    "  -d  --path    \tpath to shared directory\n"
+                    "  -c  --channel \tchannel to join\n"
+                    "  -n  --nick    \tnickname to be used\n"
             );
     exit(1);
 }
