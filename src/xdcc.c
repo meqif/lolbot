@@ -18,37 +18,6 @@ extern int nfiles;
 extern struct file_data *files;
 struct xdcc_request *request;
 
-/* Converts an IPv4 address given in a string to the corresponding integer */
-int ipv4_str_to_int(char *str)
-{
-    union {
-        int x;
-        unsigned char y[4];
-    } gamma;
-
-    char *ptr = str;
-    int i = 0;
-
-    while(i < 4) {
-        if (*str == '.' || *str == 0) {
-            ssize_t len = str-ptr;
-            char *tmp = calloc(len+1, sizeof(char));
-            strncpy(tmp, ptr, len);
-            gamma.y[i++] = atoi(tmp);
-            free(tmp);
-            ptr = str+1;
-        }
-        if (*str == 0)
-            break;
-        str++;
-    }
-
-    if (i != 4)
-        return -1;
-
-    return gamma.x;
-}
-
 int xdcc_list(char *remote_nick, int sockfd)
 {
     int i;

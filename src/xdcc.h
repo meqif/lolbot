@@ -9,7 +9,6 @@ struct xdcc_request {
     unsigned long offset;
 };
 
-int ipv4_str_to_int(char *str);
 int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd);
 int xdcc_list(char *remote_nick, int sockfd);
 
