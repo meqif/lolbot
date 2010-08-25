@@ -63,14 +63,20 @@ int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
 {
     char *port = "8888";
     int porti = atoi(port);
+    int addr;
+    struct in_addr addr_;
+
+    if (inet_aton(ip, &addr_) == 0) {
+        perror("inet_aton");
+        return 1;
+    } else
+        addr = addr_.s_addr;
 
     // Create listening socket
     int newsock = create_socket(NULL, port);
     listen(newsock, 4);
 
     // Send details to client
-    int addr = htonl(ipv4_str_to_int(ip));
-
     request = malloc(sizeof(struct xdcc_request));
     request->file = requested_file;
     request->offset = 0;
