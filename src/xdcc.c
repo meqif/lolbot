@@ -21,9 +21,8 @@ struct xdcc_request *request;
 int xdcc_list(char *remote_nick, int sockfd)
 {
     int i;
-    for (i = 0; i < nfiles; i++) {
+    for (i = 0; i < nfiles; i++)
         irc_notice(sockfd, remote_nick, files[i].desc);
-    }
 
     return 0;
 }
@@ -31,15 +30,17 @@ int xdcc_list(char *remote_nick, int sockfd)
 int xdcc_send(struct file_data *requested_file, char *remote_nick, int sockfd)
 {
     char *port = "8888";
-    int porti = atoi(port);
-    int addr;
+    int porti, addr;
     struct in_addr addr_;
+
+    porti = atoi(port);
 
     if (inet_aton(ip, &addr_) == 0) {
         perror("inet_aton");
         return 1;
-    } else
+    } else {
         addr = addr_.s_addr;
+    }
 
     // Create listening socket
     int newsock = create_socket(NULL, port);
