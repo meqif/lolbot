@@ -58,14 +58,14 @@ extern bstring bot_nickname;
 
 %% write data;
 
-irc_request *irc_parser(char *string, size_t len)
+irc_request *irc_parser(bstring buffer)
 {
-    if (string == NULL)
+    if (buffer == NULL)
         return NULL;
 
     int cs = 0;
-    const char *p = string;
-    const char *pe = p+len;
+    const char *p = bdata(buffer);
+    const char *pe = p+blength(buffer);
     const char *eof = NULL;
     const char *mark = p;
     bstring botname = NULL, digits = NULL;

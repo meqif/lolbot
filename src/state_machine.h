@@ -3,7 +3,8 @@
 
 #include "globals.h"
 #include "irc_request.h"
+#include <bstring.h>
 
-irc_request *irc_parser(char *string, size_t len);
+irc_request *irc_parser(bstring buffer);
 
 #endif /* FSM_H */

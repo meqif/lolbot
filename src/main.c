@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 #ifndef NDEBUG
         printf("%s", bdata(buf));
 #endif
-        irc_request *irc_req = irc_parser(bdata(buf), blength(buf));
+        irc_request *irc_req = irc_parser(buf);
         bdestroy(buf);
 
         if (irc_req == NULL)
