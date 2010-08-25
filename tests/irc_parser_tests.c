@@ -303,6 +303,14 @@ char *test_admin()
     bdestroy(msg);
     IrcRequest_free(irc_req);
 
+    msg = bformat("%s PRIVMSG lolbot :admin omgh4x quit\r\n", bdata(&dummy));
+    irc_req = irc_parser(msg);
+    mu_assert("", irc_req != NULL);
+    mu_assert("Invalid admin password", irc_req->op == INVALID);
+    mu_assert("", bstrcmp(&nick, irc_req->remote_nick) == 0);
+    bdestroy(msg);
+    IrcRequest_free(irc_req);
+
     msg = bformat("%s PRIVMSG lolbot :xdcc admin 0x123456789 quit\r\n", bdata(&dummy));
     irc_req = irc_parser(msg);
     mu_assert("", irc_req != NULL);
