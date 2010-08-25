@@ -45,6 +45,7 @@ valgrind:
 
 coverage: CFLAGS += -fprofile-arcs -ftest-coverage
 coverage: clean all
+	find ./src/bstr -name "*.gc*" -exec rm {} \;
 	zcov-scan tests/m2.zcov
 	zcov-genhtml tests/m2.zcov tests/coverage
 	zcov-summarize tests/m2.zcov
