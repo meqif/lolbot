@@ -17,14 +17,6 @@ For instance
 
   lolbot -s irc.rizon.net -n mybot -c somechannel -d ~/shared_stuff
 
-== Known issues
-
-* Currently, the bot deals with only one connection at a time. It runs in a
-  single thread, in a single process.
-* The admin password is hard coded.
-* There's no clean way to shut down the bot other than issuing a "admin
-  <password> quit" command through a private message.
-
 == Reporting issues/bugs
 
 lolbot uses GitHub Issues for tracking issues/bugs:
@@ -68,14 +60,6 @@ loldrop has been tested on the following:
 
 * gcc (4.2.1, 4.5.0)
 * clang (1.1)
-
-== Todo
-
-* Add more unit tests for greater code coverage
-* Add transfer queues
-* Add some sort of multiplex support
-* Add support for xdcc queue, a nifty command that allows queuing a range
-  (#1-#5) or a list (#1,#3,#5) of packs for download
 
 == Author
 
