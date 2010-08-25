@@ -107,12 +107,10 @@ int main(int argc, char *argv[])
         if (irc_req == NULL)
             continue;
 
-        if (irc_req->op == QUIT) {
+        if (handler(sockfd, irc_req)) {
             IrcRequest_free(irc_req);
             break;
         }
-
-        handler(sockfd, irc_req);
 
         IrcRequest_free(irc_req);
     }
