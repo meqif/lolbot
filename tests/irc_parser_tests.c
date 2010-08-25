@@ -257,6 +257,7 @@ char *test_stupidity()
 
     irc_req = irc_parser(NULL);
     mu_assert("NULL message", irc_req == NULL);
+    IrcRequest_free(irc_req); // This is part of the stupidity test
 
     msg = bfromcstr("");
     irc_req = irc_parser(msg);
