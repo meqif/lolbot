@@ -20,6 +20,7 @@ static struct option long_opts[] = {
     { "path",      required_argument, NULL, 'd' },
     { "channel",   required_argument, NULL, 'c' },
     { "nick",      required_argument, NULL, 'n' },
+    { "password",  required_argument, NULL, 'k' },
     { NULL,        0,                 NULL,  0  }
 };
 
@@ -31,6 +32,7 @@ static void usage() {
                     "  -d  --path    \tpath to shared directory\n"
                     "  -c  --channel \tchannel to join\n"
                     "  -n  --nick    \tnickname to be used\n"
+                    "  -k  --password\tpassword for remote administration\n"
             );
     exit(1);
 }
@@ -39,10 +41,10 @@ int main(int argc, char *argv[])
 {
     int sockfd, err, ch;
     char *shared_path = NULL, *server = NULL, *port = DEFAULT_PORT,
-         *channel = NULL, *nick = NULL, *ptr;
+         *channel = NULL, *nick = NULL, *password = NULL, *ptr;
     bstring buf;
 
-    while ((ch = getopt_long(argc, argv, "hspdcn", long_opts, NULL)) != -1) {
+    while ((ch = getopt_long(argc, argv, "hspdcnk", long_opts, NULL)) != -1) {
         ptr = optarg ? optarg : argv[optind];
 
         if (!ptr) {
@@ -68,6 +70,9 @@ int main(int argc, char *argv[])
                 if (*channel == '#')
                     channel++;
                 break;
+            case 'k':
+                password = ptr;
+                break;
             case 'h':
             default:
                 usage();
@@ -77,10 +82,10 @@ int main(int argc, char *argv[])
     argc -= optind;
     argv += optind;
 
-    if (!shared_path || !server || !channel || !nick)
+    if (!shared_path || !server || !channel || !nick || !password)
         usage();
 
-    if (init_server(nick, shared_path)) {
+    if (init_server(nick, shared_path, password)) {
         fprintf(stderr, "Error initalizing data structures, bailing out.\n");
         return 1;
     }

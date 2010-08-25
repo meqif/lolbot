@@ -12,6 +12,7 @@ file serving and distribution via the DCC protocol.
     -d  --path    	path to shared directory
     -c  --channel 	channel to join
     -n  --nick    	nickname to be used
+    -k  --password	password for remote administration
 
 For instance
 

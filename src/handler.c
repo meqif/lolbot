@@ -17,7 +17,7 @@
 char *shared_path, *ip;
 int nfiles;
 struct file_data *files;
-bstring bot_nickname;
+bstring bot_nickname, admin_password;
 
 /* String comparison for quicksort */
 static
@@ -51,7 +51,7 @@ int handler(int sockfd, irc_request *irc_req)
     return 0;
 }
 
-int init_server(char *nick, char *path)
+int init_server(char *nick, char *path, char *password)
 {
     struct dirent *d;
     struct stat *s;
@@ -59,6 +59,7 @@ int init_server(char *nick, char *path)
 
     shared_path = path;
     bot_nickname = bfromcstr(nick);
+    admin_password = bfromcstr(password);
     ip = get_external_ip();
 
     if (ip == NULL) {
@@ -154,6 +155,7 @@ int tear_down_server()
     free(files);
     free(ip);
     bdestroy(bot_nickname);
+    bdestroy(admin_password);
 
     return 0;
 }

@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <bstring.h>
 
-extern bstring bot_nickname;
+extern bstring bot_nickname, admin_password;
 
 %%{
     machine irc_parser;
@@ -16,6 +16,12 @@ extern bstring bot_nickname;
     action botname {
         botname = blk2bstr(mark, fpc-mark);
         if (botname && bstrcmp(botname, bot_nickname) != 0)
+            fbreak;
+    }
+
+    action password {
+        password = blk2bstr(mark, fpc-mark);
+        if (password && bstrcmp(password, admin_password) != 0)
             fbreak;
     }
 
@@ -48,7 +54,7 @@ extern bstring bot_nickname;
     filler = ":" alnum+ >mark %remote_nick "!" address " PRIVMSG " botname whitespace ":" whitespace*;
     xdcc = "xdcc" whitespace (single|multi);
     ping = ("PING" @{ irc_req->op = PING; }) whitespace ":"? ((alnum|".")+ >mark %remote_nick);
-    admin = "admin" whitespace "0x123456789" whitespace "quit" @{ irc_req->op = QUIT; };
+    admin = "admin" whitespace (graph+ >mark %password) whitespace "quit" @{ irc_req->op = QUIT; };
 
     main :=
             ( filler xdcc whitespace* ) |
@@ -68,13 +74,14 @@ irc_request *irc_parser(bstring buffer)
     const char *pe = p+blength(buffer);
     const char *eof = NULL;
     const char *mark = p;
-    bstring botname = NULL, digits = NULL;
+    bstring botname = NULL, digits = NULL, password = NULL;
     irc_request *irc_req = IrcRequest_create();
 
     %% write init;
     %% write exec;
 
     bdestroy(botname);
+    bdestroy(password);
 
     if ( cs < %%{ write first_final; }%% ) {
         irc_req->op = INVALID;

@@ -14,7 +14,7 @@ struct file_data {
 };
 
 int handler(int sockfd, irc_request *irc_req);
-int init_server(char *nick, char *path);
+int init_server(char *nick, char *path, char *password);
 int tear_down_server();
 
 #endif

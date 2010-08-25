@@ -10,7 +10,7 @@ int tests_run = 0;
 int assertion = 0;
 const char *last_test = "";
 int line = 0;
-extern bstring bot_nickname;
+extern bstring bot_nickname, admin_password;
 static struct tagbstring nick   = bsStatic("nick");
 static struct tagbstring nick2  = bsStatic("remoteserver.net");
 static struct tagbstring dummy  = bsStatic(":nick!~user@127.0.0.1");
@@ -316,6 +316,7 @@ char *test_admin()
 static
 char *all_tests() {
     bot_nickname = bfromcstr("lolbot");
+    admin_password = bfromcstr("0x123456789");
 
     mu_run_test(test_xdcc_list);
     mu_run_test(test_xdcc_send);
@@ -326,6 +327,7 @@ char *all_tests() {
     mu_run_test(test_admin);
 
     bdestroy(bot_nickname);
+    bdestroy(admin_password);
     return NULL;
 }
 
